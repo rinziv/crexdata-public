@@ -1,0 +1,16 @@
+torch
+datasets
+einops
+sentencepiece
+tokenizers
+protobuf
+pandas
+py-cpuinfo>=9.0.0
+cleanlab==2.5.0
+numpy
+scikit_learn
+tqdm
+python-multipart
+accelerate
+mistral_inference
+transformers>=4.43.0 
