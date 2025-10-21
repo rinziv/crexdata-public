@@ -2,3 +2,7 @@
 	path = WP2/simulators/EpiSim.jl
 	url = https://github.com/Epi-Sim/EpiSim.jl
 	branch = main
+[submodule "WP2/use-cases/health-crisis/episim-emews"]
+	path = WP2/use-cases/health-crisis/episim-emews
+	url = https://github.com/Epi-Sim/episim-emews
+	branch = main
