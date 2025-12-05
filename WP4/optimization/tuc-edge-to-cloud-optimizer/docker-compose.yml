@@ -1,0 +1,70 @@
+version: "3.4"
+
+services:
+  elasticsearch:
+    build:
+      context: ./deployment/elk/elasticsearch
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    volumes:
+      - type: bind
+        source: ./docker_fs/services/elasticsearch/config/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+      - type: bind
+        source: ./docker_fs/services/elasticsearch/volume1/data
+        target: /usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx4g -Xms256m"
+      ELASTIC_PASSWORD: ${ES_PASSWORD}
+    networks:
+      - athena_net
+    env_file:
+      - .env
+
+  kibana:
+    build:
+      context: ./deployment/elk/kibana
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    volumes:
+      - type: bind
+        source: ./docker_fs/services/kibana/config/kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: true
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - athena_net
+    env_file:
+      - .env
+
+  optimizer:
+    image: raniantouni/optimizerx:latest
+    volumes:
+      - type: bind
+        source: ./docker_fs/athena/web/logs
+        target: /tmp/logs
+    ports:
+      - "${ATHENA_OPTIMIZER_WEB_PORT}:8080"
+    environment:
+      OPTIMIZER_WEB_LOG_DIR: /tmp/logs
+      ATHENA_OPTIMIZER_BIND_ADR: host.docker.internal
+      ATHENA_BENCHMARKING_URL: ${ATHENA_OPTIMIZER_BENCHMARKING_URL:-benchmarking:20002}
+      ATHENA_FS_URL: ${ATHENA_OPTIMIZER_FS_URL:-file_server:20003}
+      ATHENA_BO_URL: ${ATHENA_OPTIMIZER_BO_URL:-bayesian_optimization:20004}
+      ATHENA_ADAPTATION_URL: ${ATHENA_OPTIMIZER_ADAPTATION_URL:-adaptation:20005}
+    env_file:
+      - .env
+    networks:
+      - athena_net
+
+networks:
+  athena_net:
+    driver: bridge
+
