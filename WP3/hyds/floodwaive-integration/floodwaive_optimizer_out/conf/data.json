@@ -1,0 +1,31 @@
+{
+    "general": {
+        "log_file": "/app/logs/crexdata/floodwaive_optimizer.log",
+        "file_date_format": "YmdHi",
+        "data_backward_requests_factor": 3
+    },
+    "monitoring": {
+        "data_availability_name": "crexdata/floodwaive"
+    },
+    "inputs": {
+        "date_extraction_pattern": "/\\d{8}T\\d{4}/"
+    },
+    "products": [
+        {
+            "variable": "water_depth_innsbruck",
+            "type": "flood_simulation",
+            "supplier": "floodwaive",
+            "code": "water_depth_dormund",
+
+            "area_id": "area_20250913133225"
+        },
+        {
+            "variable": "water_depth_dormund",
+            "type": "flood_simulation",
+            "supplier": "floodwaive",
+            "code": "water_depth_dormund",
+
+            "area_id": "area_20250519130422"
+        }
+    ]
+}

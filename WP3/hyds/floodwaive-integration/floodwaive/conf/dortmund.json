@@ -1,0 +1,19 @@
+{
+    "general": {
+        "log_file": "/app/logs/crexdata/floodwaive_dortmund.log",
+        "file_date_format": "YmdHi",
+        "data_backward_requests_factor": 3
+    },
+    "inputs": {
+        "date_extraction_pattern": "/\\d{8}T\\d{4}/"
+    },
+    "products": [
+        {
+            "variable": "water_depth_dormund",
+            "type": "flood_simulation",
+            "supplier": "floodwaive",
+
+            "area_id": "area_20250519130422"
+        }
+    ]
+}
