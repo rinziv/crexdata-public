@@ -22,3 +22,6 @@
 	path = CREXDATA Use Case Scenarios/Health Emergency Use Case/Workflows/episim-models
 	url = https://github.com/Epi-Sim/episim-models/
 	branch = main
+[submodule "CREXDATA System Components/odm_kafka_bridge (DRZ)"]
+	path = CREXDATA System Components/odm_kafka_bridge (DRZ)
+	url = https://github.com/rettungsrobotik/odm_kafka_bridge
