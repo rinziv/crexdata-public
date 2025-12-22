@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="11.1.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="11.1.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="process_defined_operators:custom_subprocess" compatibility="1.2.004" expanded="true" height="82" name="MMDF Fused telemetries" width="90" x="179" y="136">
+        <process expanded="true">
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_source_operator" compatibility="1.0.007" expanded="true" height="68" name="ais" width="90" x="45" y="136">
+            <parameter key="name" value="ais"/>
+            <parameter key="lon" value="lon"/>
+            <parameter key="lat" value="lat"/>
+            <parameter key="id" value="mmsi"/>
+            <parameter key="t" value="timestamp"/>
+            <parameter key="resolution" value="9"/>
+            <parameter key="expires_ms" value="600000"/>
+            <parameter key="peek" value="true"/>
+          </operator>
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_source_operator" compatibility="1.0.007" expanded="true" height="68" name="ccc-position" width="90" x="45" y="238">
+            <parameter key="name" value="ccc-position"/>
+            <parameter key="lon" value="lon"/>
+            <parameter key="lat" value="lat"/>
+            <parameter key="id" value="mmsi"/>
+            <parameter key="t" value="timestamp"/>
+            <parameter key="resolution" value="9"/>
+            <parameter key="expires_ms" value="600000"/>
+            <parameter key="peek" value="false"/>
+          </operator>
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_transformer_operator" compatibility="1.0.007" expanded="true" height="68" name="flatMap" width="90" x="179" y="238">
+            <parameter key="method" value="flatMap"/>
+            <parameter key="field" value="h3"/>
+            <parameter key="operator" value="notnull"/>
+            <parameter key="value" value="1"/>
+            <parameter key="output" value="ccc-position"/>
+            <parameter key="topic" value="false"/>
+            <parameter key="peek" value="false"/>
+          </operator>
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_source_operator" compatibility="1.0.007" expanded="true" height="68" name="crex-boundaries" width="90" x="45" y="340">
+            <parameter key="name" value="crex-boundaries"/>
+            <parameter key="lon" value="lon"/>
+            <parameter key="lat" value="lat"/>
+            <parameter key="id" value="h3"/>
+            <parameter key="t" value="timestamp"/>
+            <parameter key="resolution" value="9"/>
+            <parameter key="expires_ms" value="600000"/>
+            <parameter key="peek" value="false"/>
+          </operator>
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_source_operator" compatibility="1.0.007" expanded="true" height="68" name="crex-video" width="90" x="45" y="442">
+            <parameter key="name" value="crex-video"/>
+            <parameter key="lon" value="lon"/>
+            <parameter key="lat" value="lat"/>
+            <parameter key="id" value="h3"/>
+            <parameter key="t" value="timestamp"/>
+            <parameter key="resolution" value="9"/>
+            <parameter key="expires_ms" value="600000"/>
+            <parameter key="peek" value="false"/>
+          </operator>
+          <operator activated="true" class="multiply" compatibility="11.1.000" expanded="true" height="103" name="Multiply" width="90" x="313" y="238"/>
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_join_operator" compatibility="1.0.007" expanded="true" height="82" name="merged-ais-ccc-position" width="90" x="447" y="136">
+            <parameter key="type" value="merge"/>
+            <parameter key="spatial_index" value="h3"/>
+            <parameter key="dt_ms" value="10000"/>
+            <parameter key="distance" value="10"/>
+            <parameter key="spatial_resolution" value="9"/>
+            <parameter key="id_join_mechanism" value="ignore"/>
+            <parameter key="records_name" value="merged-ais-ccc-position"/>
+            <parameter key="output" value="merged-ais-ccc-position"/>
+            <parameter key="topic" value="false"/>
+            <parameter key="peek" value="false"/>
+          </operator>
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_join_operator" compatibility="1.0.007" expanded="true" height="82" name="crex-maritime-fused" width="90" x="581" y="238">
+            <parameter key="type" value="join"/>
+            <parameter key="spatial_index" value="h3"/>
+            <parameter key="dt_ms" value="2000"/>
+            <parameter key="distance" value="50"/>
+            <parameter key="spatial_resolution" value="9"/>
+            <parameter key="id_join_mechanism" value="disjoin"/>
+            <parameter key="records_name" value="detections"/>
+            <parameter key="output" value="crex-maritime-fused"/>
+            <parameter key="topic" value="true"/>
+            <parameter key="peek" value="false"/>
+          </operator>
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_transformer_operator" compatibility="1.0.007" expanded="true" height="68" name="sog" width="90" x="715" y="238">
+            <parameter key="method" value="filter"/>
+            <parameter key="field" value="sog"/>
+            <parameter key="operator" value="gt"/>
+            <parameter key="value" value="0.0"/>
+            <parameter key="output" value="crexdata-maritime-fused-sog"/>
+            <parameter key="topic" value="true"/>
+            <parameter key="peek" value="false"/>
+          </operator>
+          <operator activated="true" class="multiply" compatibility="11.1.000" expanded="true" height="103" name="Multiply (2)" width="90" x="849" y="238"/>
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_join_operator" compatibility="1.0.007" expanded="true" height="82" name="ccc-fused-shapefile" width="90" x="1050" y="340">
+            <parameter key="type" value="leftJoinAsTable"/>
+            <parameter key="spatial_index" value="h3"/>
+            <parameter key="dt_ms" value="2000"/>
+            <parameter key="distance" value="1000"/>
+            <parameter key="spatial_resolution" value="9"/>
+            <parameter key="id_join_mechanism" value="ignore"/>
+            <parameter key="records_name" value="ccc-fused-shapefile"/>
+            <parameter key="output" value="ccc-fused-shapefile"/>
+            <parameter key="topic" value="false"/>
+            <parameter key="peek" value="false"/>
+          </operator>
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_join_operator" compatibility="1.0.007" expanded="true" height="82" name="ccc-fused-final" width="90" x="1251" y="391">
+            <parameter key="type" value="leftJoinAsTable"/>
+            <parameter key="spatial_index" value="h3"/>
+            <parameter key="dt_ms" value="2000"/>
+            <parameter key="distance" value="1000"/>
+            <parameter key="spatial_resolution" value="9"/>
+            <parameter key="id_join_mechanism" value="ignore"/>
+            <parameter key="records_name" value="ccc-fused-final"/>
+            <parameter key="output" value="ccc-fused-final"/>
+            <parameter key="topic" value="false"/>
+            <parameter key="peek" value="false"/>
+          </operator>
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_transformer_operator" compatibility="1.0.007" expanded="true" height="68" name="kplerCa" width="90" x="1050" y="187">
+            <parameter key="method" value="kplerCA"/>
+            <parameter key="field" value="h3"/>
+            <parameter key="operator" value="notnull"/>
+            <parameter key="value" value="0.0"/>
+            <parameter key="output" value="crex-maritime-ca-internal"/>
+            <parameter key="topic" value="false"/>
+            <parameter key="peek" value="false"/>
+          </operator>
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_transformer_operator" compatibility="1.0.007" expanded="true" height="68" name="interval" width="90" x="1251" y="187">
+            <parameter key="method" value="interval"/>
+            <parameter key="field" value="id"/>
+            <parameter key="operator" value="hasvalue"/>
+            <parameter key="value" value="2"/>
+            <parameter key="output" value="crex-maritime-ca"/>
+            <parameter key="topic" value="true"/>
+            <parameter key="peek" value="true"/>
+          </operator>
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_concat_operator" compatibility="1.0.007" expanded="true" height="82" name="mmdf_concat_operator" width="90" x="1452" y="187"/>
+          <connect from_op="ais" from_port="document" to_op="merged-ais-ccc-position" to_port="left"/>
+          <connect from_op="ccc-position" from_port="document" to_op="flatMap" to_port="in config"/>
+          <connect from_op="flatMap" from_port="document" to_op="Multiply" to_port="input"/>
+          <connect from_op="crex-boundaries" from_port="document" to_op="ccc-fused-shapefile" to_port="right"/>
+          <connect from_op="crex-video" from_port="document" to_op="ccc-fused-final" to_port="right"/>
+          <connect from_op="Multiply" from_port="output 1" to_op="merged-ais-ccc-position" to_port="right"/>
+          <connect from_op="Multiply" from_port="output 2" to_op="crex-maritime-fused" to_port="right"/>
+          <connect from_op="merged-ais-ccc-position" from_port="out stream" to_op="crex-maritime-fused" to_port="left"/>
+          <connect from_op="crex-maritime-fused" from_port="out stream" to_op="sog" to_port="in config"/>
+          <connect from_op="sog" from_port="document" to_op="Multiply (2)" to_port="input"/>
+          <connect from_op="Multiply (2)" from_port="output 1" to_op="ccc-fused-shapefile" to_port="left"/>
+          <connect from_op="Multiply (2)" from_port="output 2" to_op="kplerCa" to_port="in config"/>
+          <connect from_op="ccc-fused-shapefile" from_port="out stream" to_op="ccc-fused-final" to_port="left"/>
+          <connect from_op="ccc-fused-final" from_port="out stream" to_op="mmdf_concat_operator" to_port="right"/>
+          <connect from_op="kplerCa" from_port="document" to_op="interval" to_port="in config"/>
+          <connect from_op="interval" from_port="document" to_op="mmdf_concat_operator" to_port="left"/>
+          <connect from_op="mmdf_concat_operator" from_port="out stream" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+          <description align="center" color="yellow" colored="false" height="97" resized="true" width="266" x="415" y="10">First combine datasets and then look up for each asv for its near by vessels and asv's&lt;br&gt;self-join on asv data</description>
+          <description align="center" color="yellow" colored="false" height="56" resized="true" width="118" x="706" y="317">filter only moving vessels and asvs</description>
+          <description align="center" color="yellow" colored="false" height="91" resized="true" width="124" x="1048" y="89">Custom operator to convert fused result into CA format</description>
+          <description align="center" color="yellow" colored="true" height="89" resized="false" width="126" x="172" y="10">Publish positions to nearby cells to ensure proper coverage on joins</description>
+          <description align="center" color="yellow" colored="false" height="126" resized="false" width="118" x="1241" y="479">Base on each camera footprint ,&lt;br/&gt;Fuse the relevant camera stream url</description>
+          <description align="center" color="yellow" colored="false" height="129" resized="true" width="129" x="1034" y="476">Fuse each h3 cell with the corresponding part of the original geometry</description>
+          <description align="center" color="yellow" colored="false" height="91" resized="false" width="124" x="1363" y="89">Concatenate configurations into a single file</description>
+        </process>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="11.1.000" expanded="true" height="103" name="Multiply (5)" width="90" x="313" y="136"/>
+      <operator activated="true" class="process_defined_operators:custom_subprocess" compatibility="1.2.004" expanded="true" height="82" name="MMDF CA reponse" width="90" x="112" y="442">
+        <process expanded="true">
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_source_operator" compatibility="1.0.007" expanded="true" height="68" name="kpler-crex-maritime-ca-result" width="90" x="45" y="34">
+            <parameter key="name" value="inc-kpler-crex-maritime-ca-result"/>
+            <parameter key="lon" value="collision_lon"/>
+            <parameter key="lat" value="collision_lat"/>
+            <parameter key="id" value="collision_id"/>
+            <parameter key="t" value="timestamp"/>
+            <parameter key="resolution" value="9"/>
+            <parameter key="expires_ms" value="600000"/>
+            <parameter key="peek" value="false"/>
+          </operator>
+          <operator activated="true" class="mmdf_tooblox_extension:mmdf_transformer_operator" compatibility="1.0.007" expanded="true" height="68" name="asv_Command" width="90" x="246" y="34">
+            <parameter key="method" value="asvCommand"/>
+            <parameter key="field" value="id"/>
+            <parameter key="operator" value="hasvalue"/>
+            <parameter key="value" value="0.0"/>
+            <parameter key="output" value="crex-commands"/>
+            <parameter key="topic" value="true"/>
+            <parameter key="peek" value="false"/>
+          </operator>
+          <connect from_op="kpler-crex-maritime-ca-result" from_port="document" to_op="asv_Command" to_port="in config"/>
+          <connect from_op="asv_Command" from_port="document" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+          <description align="center" color="yellow" colored="false" height="116" resized="true" width="134" x="38" y="116">Read recommendation for Collision Avoidance from the response topic</description>
+          <description align="center" color="yellow" colored="false" height="115" resized="true" width="118" x="239" y="112">Format replies into a ASV command format</description>
+        </process>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="11.1.000" expanded="true" height="103" name="Multiply (4)" width="90" x="246" y="442"/>
+      <operator activated="true" class="retrieve" compatibility="11.1.000" expanded="true" height="68" name="Retrieve Localhost Kafka" width="90" x="313" y="238">
+        <parameter key="repository_entry" value="/Connections/Localhost Kafka"/>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="11.1.000" expanded="true" height="145" name="Multiply (3)" width="90" x="514" y="238"/>
+      <operator activated="true" class="mmdf_tooblox_extension:mmdf_url_loader_operator" compatibility="1.0.007" expanded="true" height="82" name="MMDF URL Injector" width="90" x="782" y="646">
+        <parameter key="url" value="https://smartmove.aegean.gr/"/>
+        <parameter key="wkt" value="POLYGON ((24.932785 37.434726, 24.934845 37.427706, 24.948835 37.42607, 24.951153 37.432205, 24.94729 37.443109, 24.932785 37.434726))"/>
+        <parameter key="topic" value="crex-video"/>
+        <parameter key="resolution" value="9"/>
+        <parameter key="state.dir" value="/tmp/"/>
+      </operator>
+      <operator activated="true" class="mmdf_tooblox_extension:mmdf_fusion_operator" compatibility="1.0.007" expanded="true" height="82" name="mmdf_fusion_forward" width="90" x="715" y="136">
+        <parameter key="auto.offset.reset" value="latest"/>
+        <parameter key="run.in.thread" value="true"/>
+        <parameter key="state.dir" value="/tmp/"/>
+      </operator>
+      <operator activated="true" class="mmdf_tooblox_extension:mmdf_fusion_operator" compatibility="1.0.007" expanded="true" height="82" name="mmdf_operator_feddback" width="90" x="715" y="442">
+        <parameter key="auto.offset.reset" value="latest"/>
+        <parameter key="run.in.thread" value="true"/>
+        <parameter key="state.dir" value="/tmp/"/>
+      </operator>
+      <operator activated="true" class="mmdf_tooblox_extension:mmdf_shape_file_loader_operator" compatibility="1.0.007" expanded="true" height="82" name="MMDF Shapefile Injector" width="90" x="782" y="544">
+        <parameter key="shapefile_url" value="/Users/giannis/Documents/_data/marina/Marina Coastline.shp"/>
+        <parameter key="topic" value="crex-boundaries"/>
+        <parameter key="resolution" value="9"/>
+        <parameter key="state.dir" value="/tmp/"/>
+      </operator>
+      <connect from_op="MMDF Fused telemetries" from_port="out 1" to_op="Multiply (5)" to_port="input"/>
+      <connect from_op="Multiply (5)" from_port="output 1" to_op="mmdf_fusion_forward" to_port="fusion_conf"/>
+      <connect from_op="Multiply (5)" from_port="output 2" to_port="result 4"/>
+      <connect from_op="MMDF CA reponse" from_port="out 1" to_op="Multiply (4)" to_port="input"/>
+      <connect from_op="Multiply (4)" from_port="output 1" to_op="mmdf_operator_feddback" to_port="fusion_conf"/>
+      <connect from_op="Multiply (4)" from_port="output 2" to_port="result 3"/>
+      <connect from_op="Retrieve Localhost Kafka" from_port="output" to_op="Multiply (3)" to_port="input"/>
+      <connect from_op="Multiply (3)" from_port="output 1" to_op="mmdf_fusion_forward" to_port="connection"/>
+      <connect from_op="Multiply (3)" from_port="output 2" to_op="mmdf_operator_feddback" to_port="connection"/>
+      <connect from_op="Multiply (3)" from_port="output 3" to_op="MMDF Shapefile Injector" to_port="connection"/>
+      <connect from_op="Multiply (3)" from_port="output 4" to_op="MMDF URL Injector" to_port="connection"/>
+      <connect from_op="MMDF URL Injector" from_port="appId" to_port="result 6"/>
+      <connect from_op="mmdf_fusion_forward" from_port="connection" to_port="result 1"/>
+      <connect from_op="mmdf_operator_feddback" from_port="connection" to_port="result 2"/>
+      <connect from_op="MMDF Shapefile Injector" from_port="appId" to_port="result 5"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <portSpacing port="sink_result 4" spacing="0"/>
+      <portSpacing port="sink_result 5" spacing="0"/>
+      <portSpacing port="sink_result 6" spacing="0"/>
+      <portSpacing port="sink_result 7" spacing="0"/>
+      <description align="center" color="yellow" colored="false" height="50" resized="true" width="331" x="94" y="73">ASV to Collision Avoidance (FORWARD)</description>
+      <description align="center" color="yellow" colored="false" height="50" resized="true" width="317" x="100" y="378">Collision Avoidance to ASV workflow (RETURN)</description>
+    </process>
+  </operator>
+</process>

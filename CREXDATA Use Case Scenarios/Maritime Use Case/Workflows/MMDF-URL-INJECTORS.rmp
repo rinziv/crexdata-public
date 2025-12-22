@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="11.1.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="11.1.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="11.1.000" expanded="true" height="68" name="Retrieve Localhost Kafka" width="90" x="45" y="34">
+        <parameter key="repository_entry" value="/Connections/Localhost Kafka"/>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="11.1.000" expanded="true" height="103" name="Multiply" width="90" x="179" y="34"/>
+      <operator activated="true" class="mmdf_tooblox_extension:mmdf_shape_file_loader_operator" compatibility="1.0.007" expanded="true" height="82" name="MMDF SHAPEFILE Injector" width="90" x="313" y="136">
+        <parameter key="shapefile_url" value="/Users/giannis/Documents/_data/marina/Marina Coastline.shp"/>
+        <parameter key="topic" value="crex-boundaries"/>
+        <parameter key="resolution" value="9"/>
+        <parameter key="state.dir" value="/tmp/"/>
+      </operator>
+      <operator activated="true" class="mmdf_tooblox_extension:mmdf_url_loader_operator" compatibility="1.0.007" expanded="true" height="82" name="MMDF URL Injector" width="90" x="313" y="34">
+        <parameter key="url" value="https://smartmove.aegean.gr/"/>
+        <parameter key="wkt" value="POLYGON ((24.932785 37.434726, 24.934845 37.427706, 24.948835 37.42607, 24.951153 37.432205, 24.94729 37.443109, 24.932785 37.434726))"/>
+        <parameter key="topic" value="crex-video"/>
+        <parameter key="resolution" value="9"/>
+        <parameter key="state.dir" value="/tmp/"/>
+      </operator>
+      <connect from_op="Retrieve Localhost Kafka" from_port="output" to_op="Multiply" to_port="input"/>
+      <connect from_op="Multiply" from_port="output 1" to_op="MMDF URL Injector" to_port="connection"/>
+      <connect from_op="Multiply" from_port="output 2" to_op="MMDF SHAPEFILE Injector" to_port="connection"/>
+      <connect from_op="MMDF SHAPEFILE Injector" from_port="appId" to_port="result 3"/>
+      <connect from_op="MMDF SHAPEFILE Injector" from_port="connection" to_port="result 4"/>
+      <connect from_op="MMDF URL Injector" from_port="appId" to_port="result 1"/>
+      <connect from_op="MMDF URL Injector" from_port="connection" to_port="result 2"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <portSpacing port="sink_result 4" spacing="0"/>
+      <portSpacing port="sink_result 5" spacing="0"/>
+    </process>
+  </operator>
+</process>

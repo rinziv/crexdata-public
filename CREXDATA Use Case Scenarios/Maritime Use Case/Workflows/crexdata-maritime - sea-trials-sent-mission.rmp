@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="11.1.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="11.1.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="logfile" value="D:/_data/rapiminer/crex.log"/>
+    <parameter key="resultfile" value="D:/_data/rapiminer/crex.res"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="web:crud_post" compatibility="10.1.000" expanded="true" height="82" name="Authentication" width="90" x="179" y="34">
+        <parameter key="request_url" value="http://localhost:8000/token"/>
+        <parameter key="request_body_type" value="form"/>
+        <list key="request_form">
+          <parameter key="username" value="username"/>
+          <parameter key="password" value="password"/>
+        </list>
+        <list key="request_headers"/>
+        <parameter key="response_body_type" value="text"/>
+        <parameter key="json_content-type" value="application/json; charset=utf-8"/>
+        <parameter key="xml_content-type" value="application/xml; charset=utf-8"/>
+        <parameter key="binary_content-type" value="application/octet-stream"/>
+        <parameter key="inject_connection_secret" value="false"/>
+        <parameter key="fail_on_endpoint_error" value="true"/>
+      </operator>
+      <operator activated="true" class="text:json_to_data" compatibility="11.0.001" expanded="true" height="82" name="JSON To Data (2)" width="90" x="313" y="34">
+        <parameter key="ignore_arrays" value="false"/>
+        <parameter key="limit_attributes" value="false"/>
+        <parameter key="skip_invalid_documents" value="true"/>
+        <parameter key="guess_data_types" value="true"/>
+        <parameter key="keep_missing_attributes" value="false"/>
+        <parameter key="missing_values_aliases" value=", null, NaN, missing"/>
+        <parameter key="preserve_attribute_order" value="false"/>
+      </operator>
+      <operator activated="true" class="de_pivot" compatibility="11.1.000" expanded="true" height="82" name="De-Pivot" width="90" x="447" y="34">
+        <list key="attribute_name">
+          <parameter key="access_token" value="access_token"/>
+        </list>
+        <parameter key="index_attribute" value="1"/>
+        <parameter key="create_nominal_index" value="false"/>
+        <parameter key="keep_missings" value="false"/>
+      </operator>
+      <operator activated="true" class="extract_macro" compatibility="11.1.000" expanded="true" height="68" name="Extract Macro" width="90" x="581" y="34">
+        <parameter key="macro" value="token"/>
+        <parameter key="macro_type" value="data_value"/>
+        <parameter key="statistics" value="average"/>
+        <parameter key="attribute_name" value="access_token"/>
+        <parameter key="example_index" value="1"/>
+        <list key="additional_macros"/>
+      </operator>
+      <operator activated="true" class="python_scripting:python_transformer" compatibility="11.0.001" expanded="true" height="68" name="missions" width="90" x="179" y="238">
+        <parameter key="editable" value="true"/>
+        <parameter key="operator" value="{&#13;&#10;  &quot;name&quot;: &quot;Custom Python Transformer&quot;,&#13;&#10;  &quot;dropSpecial&quot;: false,&#13;&#10;  &quot;parameters&quot;: [&#13;&#10;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;headon&quot;,&#13;&#10;      &quot;type&quot;: &quot;string&quot;,&#10;&#9; &quot;value&quot;: &quot;LINESTRING (24\.94169 37\.430697, 24\.942575 37\.430543);LINESTRING (24\.94242 37\.430922, 24\.941819 37\.430313))&quot;,&#10;      &quot;description&quot;: &quot;Type of head-on&quot;,&#13;&#10;      &quot;optional&quot;: false&#13;&#10;    },&#13;&#10;     {&#10;      &quot;name&quot;: &quot;crossing&quot;,&#10;      &quot;type&quot;: &quot;string&quot;,&#10;&#9; &quot;value&quot;: &quot;LINESTRING (24\.94169 37\.430697, 24\.942575 37\.430543);LINESTRING (24\.94242 37\.430922, 24\.941819 37\.430313))&quot;,&#10;      &quot;description&quot;: &quot;Type of head-on&quot;,&#10;      &quot;optional&quot;: false&#10;    },&#10;     {&#10;      &quot;name&quot;: &quot;overtaking&quot;,&#10;      &quot;type&quot;: &quot;string&quot;,&#10;&#9; &quot;value&quot;: &quot;LINESTRING (24\.94169 37\.430697, 24\.942575 37\.430543);LINESTRING (24\.94242 37\.430922, 24\.941819 37\.430313))&quot;,&#10;      &quot;description&quot;: &quot;Type of head-on&quot;,&#10;      &quot;optional&quot;: false&#10;    }&#10;&#10;     &#10;  ],&#13;&#10;  &quot;inputs&quot;: [&#13;&#10;  &#10;  ],&#10;  &quot;outputs&quot;: [&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;out&quot;,&#13;&#10;      &quot;type&quot;: &quot;table&quot;&#13;&#10;    }&#10;  ]&#13;&#10;}.from pandas import DataFrame&#10;&#10;# Mandatory main function\. This example expects a single input followed by the&#10;# parameter dictionary\.&#10;def rm_main(parameters):&#10;&#9;# Create a new data frame containing parameters\.&#10;&#9;table = DataFrame({&#10;&#9;&#9;'Key': list(parameters\.keys()),&#10;&#9;&#9;'Value': list(parameters\.values())&#10;&#9;})&#10;&#10;&#9;# Return the new data frame and pass through the input data\.&#10;&#9;return table&#10;"/>
+        <parameter key="use_default_python" value="false"/>
+        <parameter key="package_manager" value="specific python binaries"/>
+        <parameter key="python_binary" value="/usr/local/bin/python3.9"/>
+        <parameter key="headon" value="LINESTRING (24.94169 37.430697, 24.942575 37.430543);LINESTRING (24.94242 37.430922, 24.941819 37.430313))"/>
+        <parameter key="crossing" value="LINESTRING (24.94169 37.430697, 24.942575 37.430543);LINESTRING (24.94242 37.430922, 24.941819 37.430313))"/>
+        <parameter key="overtaking" value="LINESTRING (24.94169 37.430697, 24.942575 37.430543);LINESTRING (24.94242 37.430922, 24.941819 37.430313))"/>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="11.1.000" expanded="true" height="82" name="Multiply" width="90" x="313" y="238"/>
+      <operator activated="true" class="python_scripting:python_transformer" compatibility="11.0.001" expanded="true" height="68" name="transform" width="90" x="447" y="238">
+        <parameter key="editable" value="true"/>
+        <parameter key="operator" value="{&#13;&#10;  &quot;name&quot;: &quot;Custom Python Transformer&quot;,&#13;&#10;  &quot;dropSpecial&quot;: false,&#13;&#10;  &quot;parameters&quot;: [&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;operation&quot;,&#13;&#10;      &quot;type&quot;: &quot;category&quot;,&#10;&#9;&#13;&quot;categories&quot;: [&#10;&#9;        &quot;formation&quot;&#10;&#9;      ],&#10;&#9; &quot;value&quot;: &quot;formation&quot;,&#10;      &quot;description&quot;: &quot;Type of operation&quot;,&#13;&#10;      &quot;optional&quot;: false&#13;&#10;    },&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;uuid&quot;,&#13;&#10;      &quot;type&quot;: &quot;string&quot;,&#13;&#10;      &quot;description&quot;: &quot;Process uuid&quot;,&#13;&#10;      &quot;value&quot;: &quot;uuid&quot;&#13;&#10;    },&#10;    {&#10;      &quot;name&quot;: &quot;method&quot;,&#10;      &quot;type&quot;: &quot;string&quot;,&#10;      &quot;description&quot;: &quot;method of handling data&quot;,&#10;      &quot;value&quot;: &quot;asis&quot;&#10;    },&#10;     {&#10;      &quot;name&quot;: &quot;speed&quot;,&#10;      &quot;type&quot;: &quot;integer&quot;,&#10;      &quot;description&quot;: &quot;An example of a categorical parameter\.&quot;,&#10;      &quot;value&quot;: 3,&#10;      &quot;optional&quot;: true&#10;&#10;    },&#10;      {&#10;      &quot;name&quot;: &quot;n&quot;,&#10;      &quot;type&quot;: &quot;integer&quot;,&#10;      &quot;description&quot;: &quot;Number of drones\.&quot;,&#10;      &quot;value&quot;:2,&#10;      &quot;optional&quot;: false&#10;&#10;    },&#10;&#9;{&#10;&#9;  &quot;name&quot;: &quot;mission&quot;,&#10;&#9;  &quot;type&quot;: &quot;category&quot;,&#10;&#9;   &quot;categories&quot;: [&#10;&#9;        &quot;crossing&quot;,&#10;&#9;        &quot;headon&quot;&#10;&#9;      ],&#10;&#9; &quot;value&quot;: &quot;crossing&quot;&#10;&#9;}&#10;&#9;&#10;         &#10;  ],&#13;&#10;  &quot;inputs&quot;: [&#13;&#10;   &#10;   {&#10;      &quot;name&quot;: &quot;mission&quot;,&#10;      &quot;type&quot;: &quot;string&quot;&#10;    }&#10;    &#10;  ],&#10;  &quot;outputs&quot;: [&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;out&quot;,&#13;&#10;      &quot;type&quot;: &quot;table&quot;&#13;&#10;    }&#10;  ]&#13;&#10;}.from pandas import DataFrame&#10;import json&#10;&#10;# Mandatory main function\. This example expects a single input followed by the&#10;# parameter dictionary\.&#10;def rm_main(mission, parameters):&#10;&#9;# Create a new data frame containing parameters\.&#10;#&#9;print(mission)&#10;#&#9;ms = mission[parameters[&quot;missions&quot;]]&#10;#&#9;print(mission\.loc[mission\.Key==&quot;headon&quot;,&quot;Value&quot;])&#10;&#9;ms=mission\.loc[mission\.Key==parameters[&quot;mission&quot;],&quot;Value&quot;]\.iloc[0]&#10;&#9;parameters['mission'] = json\.dumps([f&quot;{x}&quot; for x in str(ms)\.split(&quot;;&quot;)])&#10;&#9;parameters[&quot;type&quot;]=parameters[&quot;operation&quot;]&#10;&#9;parameters\.pop('operation', None)&#10;&#9;&#10;#&#9;&#10;&#9;# Return the new data frame and pass through the input data\.&#10;&#9;return DataFrame(parameters,index=[&quot;uuid&quot;])\.reset_index()&#10;"/>
+        <parameter key="use_default_python" value="false"/>
+        <parameter key="package_manager" value="specific python binaries"/>
+        <parameter key="python_binary" value="/usr/local/bin/python3.9"/>
+        <parameter key="operation" value="formation"/>
+        <parameter key="uuid" value="23424"/>
+        <parameter key="method" value="asis"/>
+        <parameter key="speed" value="3"/>
+        <parameter key="n" value="2"/>
+        <parameter key="mission" value="crossing"/>
+      </operator>
+      <operator activated="true" class="text:data_to_json" compatibility="11.0.001" expanded="true" height="82" name="toJSON" width="90" x="581" y="238">
+        <parameter key="ignore_arrays" value="false"/>
+        <parameter key="generate_array" value="false"/>
+        <parameter key="include_missing_values" value="false"/>
+        <parameter key="preserve_attribute_order" value="false"/>
+      </operator>
+      <operator activated="true" class="text:combine_documents" compatibility="11.0.001" expanded="true" height="82" name="Flat Document" width="90" x="715" y="238"/>
+      <operator activated="true" class="multiply" compatibility="11.1.000" expanded="true" height="103" name="Multiply (2)" width="90" x="849" y="238"/>
+      <operator activated="true" class="web:crud_post" compatibility="10.1.000" expanded="true" height="82" name="Start vessels" width="90" x="983" y="238">
+        <parameter key="request_url" value="http://localhost:8000/swarm/control"/>
+        <parameter key="request_body_type" value="json"/>
+        <parameter key="request_json" value="{&#10;  &quot;type&quot;: &quot;start&quot;,&#10;  &quot;uuid&quot;: &quot;2fd5c1fa-c06d-488c-abfb-209d965f85a1&quot;,&#10;  &quot;speed&quot;: 0,&#10;  &quot;n&quot;: 2&#10;}"/>
+        <list key="request_form">
+          <parameter key="username" value="asv"/>
+          <parameter key="password" value="asv-syros"/>
+        </list>
+        <list key="request_headers">
+          <parameter key="Authorization" value="Bearer %{token}"/>
+        </list>
+        <parameter key="response_body_type" value="text"/>
+        <parameter key="json_content-type" value="application/json; charset=utf-8"/>
+        <parameter key="xml_content-type" value="application/xml; charset=utf-8"/>
+        <parameter key="binary_content-type" value="application/octet-stream"/>
+        <parameter key="inject_connection_secret" value="false"/>
+        <parameter key="fail_on_endpoint_error" value="false"/>
+      </operator>
+      <connect from_op="Authentication" from_port="response" to_op="JSON To Data (2)" to_port="documents 1"/>
+      <connect from_op="JSON To Data (2)" from_port="example set" to_op="De-Pivot" to_port="example set input"/>
+      <connect from_op="De-Pivot" from_port="example set output" to_op="Extract Macro" to_port="example set"/>
+      <connect from_op="missions" from_port="out" to_op="Multiply" to_port="input"/>
+      <connect from_op="Multiply" from_port="output 1" to_op="transform" to_port="mission"/>
+      <connect from_op="transform" from_port="out" to_op="toJSON" to_port="example set 1"/>
+      <connect from_op="toJSON" from_port="documents" to_op="Flat Document" to_port="documents 1"/>
+      <connect from_op="Flat Document" from_port="document" to_op="Multiply (2)" to_port="input"/>
+      <connect from_op="Multiply (2)" from_port="output 1" to_op="Start vessels" to_port="request"/>
+      <connect from_op="Multiply (2)" from_port="output 2" to_port="result 2"/>
+      <connect from_op="Start vessels" from_port="response" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <description align="center" color="yellow" colored="false" height="67" resized="false" width="204" x="703" y="44">Get Authentication token</description>
+      <description align="center" color="yellow" colored="false" height="67" resized="false" width="204" x="357" y="159">Perpare REST-API request</description>
+      <description align="center" color="yellow" colored="false" height="67" resized="false" width="204" x="825" y="156">Send POST request to ENDPOINT</description>
+    </process>
+  </operator>
+</process>
