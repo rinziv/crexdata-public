@@ -1,0 +1,8 @@
+hydra-core
+confluent-kafka
+cmake
+ninja
+pyyaml
+tqdm
+numpy
+pandas

@@ -1,0 +1,37 @@
+{
+  "mode": "ns3",
+  "ns3": {
+    "mode": "list_results",
+    "federated_learning": {
+      "model_size": "",
+      "total_rounds": "",
+      "num_clients": "",
+      "clients_per_round": "",
+      "sync_method": ""
+    },
+    "simulation": {
+      "forceRun": "",
+      "parallelism": ""
+    },
+    "output": {
+      "topic_out": "topicOut",
+      "kafka_broker": {
+        "ip": "localhost",
+        "port": 9092
+      }
+    },
+    "network": {
+      "server_datarate": "",
+      "client_mobility": "",
+      "max_packet_size": "",
+      "tx_gain": "",
+      "wifi_performance_standard": "",
+      "topology": {
+        "server": {
+          "coordinates": ""
+        },
+        "clients": ""
+      }
+    }
+  }
+}

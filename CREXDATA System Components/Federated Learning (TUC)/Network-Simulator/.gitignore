@@ -1,0 +1,78 @@
+# ========================
+# General 
+# ========================
+__pycache__
+.hydra
+.vscode
+.ipynb_checkpoints
+logs
+records
+notes.txt
+# ========================
+# Flower 
+# ========================
+fl/src/dataset/data
+# ========================
+# NS3
+# ========================
+
+# === Personal Configs ===
+.editorconfig
+.clang-format
+.waf*
+
+# === Patch & Diff Files ===
+*.diff
+*.orig
+*.patch
+*.rej
+
+# === Compiled/Object Files ===
+*.o
+*.pyc
+*.pyo
+
+# === Simulation Output Files ===
+*.cwnd
+*.dat
+*.log
+*.mob
+*.pcap
+*.plt
+*.routes
+*.tr
+animation
+[D|U]l[A-Z][a-z]*Stats.txt
+
+# === Editor/Backup Files ===
+\#*#
+~*
+
+# === Python Test Output ===
+testpy-output
+
+# === PyBindGen Cache ===
+bindings/python/pybindgen/
+
+# === Valgrind/Memcheck Output ===
+ms_print.*
+massif.*
+screenlog.*
+
+# === Static Analysis ===
+coverity
+TAGS
+
+# === Waf Lock/Cache Files ===
+.lock-waf_*_build
+.waf*
+
+
+# doxygen - normally doc but change name not to get confused with requed doc in src for building
+dox 
+
+# === Build Artifacts ===
+build-dir/
+build/
+
+

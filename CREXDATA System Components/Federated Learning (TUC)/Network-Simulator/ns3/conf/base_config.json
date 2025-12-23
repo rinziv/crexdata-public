@@ -1,0 +1,26 @@
+{
+  "num_rounds": 15,
+  "num_cpus": 3,
+  "mode": "simulation",
+  "program": "fl_simulation",
+  "debug": false,
+  "sync_method": "linear",
+  "monitor_msg_sizes": {
+    "naive": 5,
+    "linear": 10,
+    "sketch": 5008,
+    "sync": 0
+  },
+  "forceLog": false,
+  "num_clients": 5,
+  "client_per_round": 3,
+  "network_type": "wifi",
+  "server_datarate": "1000Mbps",
+  "tx_gain": 0.0,
+  "max_packet_size": 1500,
+  "network_standard": 2,
+  "client_mobility": false,
+  "topic_out": "topicOut",
+  "broker_ip": "localhost",
+  "broker_port": 9092
+}

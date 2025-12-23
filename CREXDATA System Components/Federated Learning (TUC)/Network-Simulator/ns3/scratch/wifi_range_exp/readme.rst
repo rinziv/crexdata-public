@@ -1,0 +1,1 @@
+This is a test unit where different wifi setups can be tested in order to determine the range of transmission
