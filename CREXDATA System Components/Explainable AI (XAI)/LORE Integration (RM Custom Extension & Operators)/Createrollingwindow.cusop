@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="10.4.003">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="10.4.003" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="python_scripting:python_transformer" compatibility="10.1.002" expanded="true" height="124" name="Creating Rolling Window" width="90" x="313" y="85">
+        <parameter key="editable" value="true"/>
+        <parameter key="operator" value="{&#13;&#10;  &quot;name&quot;: &quot;Custom Python Transformer&quot;,&#13;&#10;  &quot;dropSpecial&quot;: false,&#13;&#10;  &quot;parameters&quot;: [&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;window_size&quot;,&#13;&#10;      &quot;type&quot;: &quot;integer&quot;,&#13;&#10;      &quot;description&quot;: &quot;The number of time steps to use for computing the rolling feature extraction\.&quot;,&#13;&#10;      &quot;value&quot;: 5&#10;    }&#10;  ],&#13;&#10;  &quot;inputs&quot;: [&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;data&quot;,&#13;&#10;      &quot;type&quot;: &quot;table&quot;&#13;&#10;    }&#13;&#10;  ],&#13;&#10;  &quot;outputs&quot;: [&#13;&#10;    {&#10;      &quot;name&quot;: &quot;out&quot;,&#10;      &quot;type&quot;: &quot;table&quot;&#10;    },&#13;&#10;    {&#10;      &quot;name&quot;: &quot;train&quot;,&#10;      &quot;type&quot;: &quot;table&quot;&#10;    },&#10;    {&#10;      &quot;name&quot;: &quot;test&quot;,&#10;      &quot;type&quot;: &quot;table&quot;&#10;    },&#10;    {&#13;&#10;      &quot;name&quot;: &quot;through&quot;,&#13;&#10;      &quot;type&quot;: &quot;table&quot;&#13;&#10;    }&#13;&#10;  ]&#13;&#10;}.import pandas as pd&#10;&#10;def create_rolling_features(data, window_size=5, cols_to_roll=[]):&#10;    df = data\.copy(deep=True)&#10;    df = df\.sort_values(['id', 'ts'])&#10;    for col in cols_to_roll:&#10;        df[f'{col}_rolling_mean'] = df\.groupby('id', observed=True)[col]\.transform(lambda x: x\.rolling(window=window_size, min_periods=1)\.mean())&#10;        df[f'{col}_rolling_std'] = df\.groupby('id', observed=True)[col]\.transform(lambda x: x\.rolling(window=window_size, min_periods=1)\.std(ddof=0))&#10;    df = df\.dropna()&#10;    return df&#10;&#10;def split_data(data, k):&#10;&#9;df = data\.copy(deep=True)&#10;&#9;df_train = pd\.DataFrame()&#10;&#9;df_test = pd\.DataFrame()&#10;&#9;ids = df['id']\.unique()&#10;&#9;&#10;&#9;&#10;&#9; # Creating the two datasets&#10;&#9;for element in ids:&#10;&#9;&#9;df1 = df\.loc[df['id'] == element]&#10;&#9;&#9;df1 = df1\.sort_values('ts')&#10;&#9;&#9;split_point = int(k * len(df1))&#10;&#9;&#9;train_df = df1[:split_point]&#10;&#9;&#9;test_df = df1[split_point:]&#10;&#9;&#9;df_train = pd\.concat([df_train, train_df])&#10;&#9;&#9;df_test = pd\.concat([df_test, test_df])&#9;&#10;&#10;&#9;# Define mapping for all five exhaustion levels&#10;&#9;exhaustion_map = {&#10;&#9;   1\.0: 'very_low',&#10;&#9;   2\.0: 'low',&#10;&#9;   3\.0: 'medium',&#10;&#9;   4\.0: 'high',&#10;&#9;   5\.0: 'very_high'&#10;&#9;}&#10;&#9;&#10;&#9;# Apply the mapping&#10;&#9;df_train['exhaustion'] = df_train['exhaustion']\.map(exhaustion_map)&#10;&#9;df_test['exhaustion'] = df_test['exhaustion']\.map(exhaustion_map)&#10;&#9;&#10;&#9;# Convert to categorical dtype with ordered categories&#10;&#9;categories = ['very_low', 'low', 'medium', 'high', 'very_high']&#10;&#9;df_train['exhaustion'] = pd\.Categorical(df_train['exhaustion'], categories=categories, ordered=True)&#10;&#9;df_test['exhaustion'] = pd\.Categorical(df_test['exhaustion'], categories=categories, ordered=True)&#10;&#10;&#9;&#10;&#9;return df_train, df_test&#10;&#13;&#10;# Mandatory main function\. This example expects a single input followed by the&#13;&#10;# parameter dictionary\.&#13;&#10;def rm_main(data, parameters):&#10;&#10;&#9;window_size = parameters['window_size']&#10;&#9;print(f&quot;Columns: {data\.columns}&quot;)&#10;&#10;&#9;df2_swr = create_rolling_features(data, window_size=window_size, cols_to_roll=['Tskin', 'Tamb', 'ambient_RH', 'skin_RH', 'swr', 'HR', 'HR_confid', 'ACT_est'])&#10;#&#9;df2_swr['exhaustion'] = df2_swr['exhaustion']\.astype(int)\.astype(str)&#10;&#9;&#10;&#9;df_train, df_test = split_data(df2_swr, 0\.75)&#10;&#9;_df_train = pd\.DataFrame(df_train\.values)&#10;&#9;_df_train\.columns = df_train\.columns&#10;&#10;&#9;_df_test = pd\.DataFrame(df_test\.values)&#10;&#9;_df_test\.columns = df_test\.columns&#10;&#10;&#9;print(f&quot;Comparison of types&quot;)&#10;&#9;print(f&quot; \.     {type(df_train)}&quot;)&#10;&#9;print(f&quot; \.     {type(_df_train)}&quot;)&#10;&#9;&#10;&#9;# Return the new data frame and pass through the input data\.&#13;&#10;&#9;return df2_swr, _df_train, _df_test, data&#13;&#10;"/>
+        <parameter key="use_default_python" value="true"/>
+        <parameter key="package_manager" value="conda (anaconda)"/>
+        <parameter key="conda_environment" value="internship_project"/>
+        <parameter key="window_size" value="5"/>
+      </operator>
+      <connect from_port="input 1" to_op="Creating Rolling Window" to_port="data"/>
+      <connect from_op="Creating Rolling Window" from_port="train" to_port="result 1"/>
+      <connect from_op="Creating Rolling Window" from_port="test" to_port="result 2"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="source_input 2" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+    </process>
+  </operator>
+  <title>CreateRollingWindow</title>
+  <icon>paint_roller.png</icon>
+  <description/>
+  <synopsis>Create a rolling window from CSV data</synopsis>
+  <number-of-inputs>1</number-of-inputs>
+  <number-of-outputs>2</number-of-outputs>
+  <defines-optionals>true</defines-optionals>
+  <param-ordering>true</param-ordering>
+  <gets-random-seed>true</gets-random-seed>
+  <custom-operator-type>standard</custom-operator-type>
+  <template-parameters>
+    <template-parameter>
+      <operator>Creating Rolling Window</operator>
+      <parameter>window_size</parameter>
+      <alias>window_size</alias>
+      <documentation>The number of time steps to use for computing the rolling feature extraction.</documentation>
+    </template-parameter>
+  </template-parameters>
+  <input-docu>
+    <port>
+      <type>com.rapidminer.operator.IOObject</type>
+      <description>An input port</description>
+    </port>
+  </input-docu>
+  <output-docu>
+    <port>
+      <type>com.rapidminer.example.ExampleSet</type>
+      <description>Training</description>
+    </port>
+    <port>
+      <type>com.rapidminer.example.ExampleSet</type>
+      <description>Test</description>
+    </port>
+  </output-docu>
+  <tutorials/>
+</process>

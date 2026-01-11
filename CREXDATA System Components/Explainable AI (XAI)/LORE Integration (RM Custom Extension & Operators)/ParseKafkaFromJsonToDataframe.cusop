@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="10.4.003">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="10.4.003" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="python_scripting:execute_python" compatibility="10.1.002" expanded="true" height="103" name="Parse Kafka Messages" width="90" x="313" y="34">
+        <parameter key="script" value="import pandas as pd&#10;import json&#10;import heapq&#10;import dill&#10;&#10;&#10;# ------------------------------------------------------------------&#10;# Feature mapping for better readability&#10;# ------------------------------------------------------------------&#10;featureMap = {&#10;    'Tskin': 'Skin Temperature',&#10;    'Tamb': 'Ambient Temperature',&#10;    'ambient_RH': 'Ambient Humidity',&#10;    'skin_RH': 'Skin Humidity',&#10;    'swr': 'Sweat Rate',&#10;    'HR': 'Heart Rate',&#10;    'HR_confid': 'Heart Rate Confidence',&#10;    'ACT_est': 'Activity Estimate',&#10;    'Tskin_rolling_mean': 'Skin Temp (Avg)',&#10;    'Tamb_rolling_mean': 'Ambient Temp (Avg)',&#10;    'ambient_RH_rolling_mean': 'Ambient RH (Avg)',&#10;    'skin_RH_rolling_mean': 'Skin RH (Avg)',&#10;    'swr_rolling_mean': 'Sweat Rate (Avg)',&#10;    'HR_rolling_mean': 'Heart Rate (Avg)',&#10;    'HR_confid_rolling_mean': 'HR Confidence (Avg)',&#10;    'ACT_est_rolling_mean': 'Activity Est (Avg)',&#10;    'Tskin_rolling_std': 'Skin Temp (Variability)',&#10;    'Tamb_rolling_std': 'Ambient Temp (Variability)',&#10;    'ambient_RH_rolling_std': 'Ambient RH (Variability)',&#10;    'skin_RH_rolling_std': 'Skin RH (Variability)',&#10;    'swr_rolling_std': 'Sweat Rate (Variability)',&#10;    'HR_rolling_std': 'Heart Rate (Variability)',&#10;    'HR_confid_rolling_std': 'HR Confidence (Variability)',&#10;    'ACT_est_rolling_std': 'Activity Est (Variability)'&#10;};&#10;&#10;&#10;&#10;# ------------------------------------------------------------------&#10;# Convert a string to a dict, handling bad JSON or NaN&#10;# ------------------------------------------------------------------&#10;def safe_json_loads(val):&#10;    &quot;&quot;&quot;&#10;     Parse a JSON string to a dictionary, returning an empty dict on failure.&#10;&#10;    :param val: a string potentially containing JSON data&#10;    :return: a dictionary parsed from the JSON string, or an empty dict if parsing fails&#10;    &quot;&quot;&quot;&#10;    if pd.isna(val):  # skip NaN / None&#10;        return {}&#10;    try:&#10;        return json.loads(val)&#10;    except json.JSONDecodeError:&#10;        # you could log / raise / return None – here we just keep an empty dict&#10;        return {}&#10;&#10;# ------------------------------------------------------------------&#10;# Create rolling features for specified columns&#10;# ------------------------------------------------------------------&#10;def create_rolling_features(df, window_size=5, cols_to_roll=[]):&#10;    # df = df.sort_values(['id', 'ts'])&#10;    df = df.sort_values(['ts']) # assuming all data belongs to the same user&#10;    for col in cols_to_roll:&#10;        df[f'{col}_rolling_mean'] = df.groupby('id')[col].transform(lambda x: x.rolling(window=window_size, min_periods=1).mean())&#10;        df[f'{col}_rolling_std'] = df.groupby('id')[col].transform(lambda x: x.rolling(window=window_size, min_periods=1).std(ddof=0))&#10;    df = df.dropna().reset_index(drop=True)&#10;    return df&#10;&#10;# The rm_main function is mandatory.&#10;# The number of arguments must match the number of input ports (can be none),&#10;# or the number of input ports plus one if the &quot;use macros&quot; parameter is set.&#10;#&#10;# If you want to use macros, uncomment the following line and check the &quot;use macros&quot; parameter:&#10;# def rm_main(data, macros):&#10;def rm_main(data):&#10;    window_size = 5&#10;&#10;    # Display the type of the input data&#10;    print(f&quot;Type of input data: {type(data)}&quot;)&#10;&#10;    # check if data is an empty DataFrame&#10;    if data.empty:&#10;        print(&quot;Input data is empty.&quot;)&#10;        return pd.DataFrame(), pd.DataFrame()&#10;&#10;    # Access the data (display first few rows)&#10;    print(&quot;Input data preview:&quot;)&#10;    print(data.head())&#10;&#10;    columns = ['id', 'ts', 'latitude', 'longitude', 'Phase', 'Tskin', 'Tamb', 'ambient_RH', 'skin_RH', 'swr', 'HR',&#10;               'HR_confid', 'ACT_est']&#10;    subset_keys = ['Tskin', 'Tamb', 'ambient_RH', 'skin_RH', 'swr', 'HR', 'HR_confid', 'ACT_est']&#10;&#10;    # since the id key is always different, I am making the assumption that&#10;    # all readings belong to the same user&#10;&#10;    items = [safe_json_loads(row.value) for row in data.itertuples(index=False, name='rec')]&#10;    # most_recent = heapq.nlargest(window_size, items, key=lambda d: d.get('ts', -float('inf')))&#10;    #&#10;    # # Create an additional DataFrame to output&#10;    # #&#9;data2 = pd.DataFrame({'values': [2, 3, 4, 5, 6]})&#10;    # data2 = pd.DataFrame(most_recent, columns=columns)&#10;    # data2 = data2.sort_values(&quot;ts&quot;).reset_index(drop=True)&#10;&#10;    df = pd.DataFrame(items, columns=columns)&#10;    df = create_rolling_features(df, window_size=window_size, cols_to_roll=subset_keys)&#10;    # loading the model and explainer from the repository&#10;    # with open(&quot;../processes/rf_model_rolling_w5.joblib&quot;, &quot;rb&quot;) as f:&#10;    #     model = dill.load(f)&#10;    #&#10;    # with open(&quot;../processes/rf_model_rolling_w5_explainer.joblib&quot;, &quot;rb&quot;) as f:&#10;    #     explainer = dill.load(f)&#10;    #&#10;    # # You can now process df if needed (sort, aggregate, etc.)&#10;    # # df = df.sort_values(&quot;ts&quot;)  # ensure it's ordered by timestamp&#10;    # # print(df.values[-1])  # Print the last row's values to verify&#10;    # instance = df.drop(columns=['id', 'ts', 'latitude', 'longitude', 'Phase']).values[-1]&#10;    # prediction = model.predict(instance.reshape(1, -1))[0]&#10;    #&#10;    # data2['prediction'] = prediction&#10;    # explanation = explainer.explain(instance)&#10;    # # print(explanation)&#10;    #&#10;    # fi = explanation.get('feature_importances', {})&#10;    # # select only the top 3 features sorted by value descending&#10;    # top_features = dict(sorted(fi, key=lambda item: abs(item[1]), reverse=True)[:3])&#10;    # str_top_features = '\n'.join([f&quot;{featureMap[k]}: {v:.4f}&quot; for k, v in top_features.items()])&#10;    # print(f&quot;Top 3 features: {str_top_features}&quot;)&#10;&#10;&#10;    # Return the results&#10;    # Connect two output ports to receive 'data' and 'data2'&#10;    return df, data"/>
+        <parameter key="notebook_cell_tag_filter" value=""/>
+        <parameter key="use_default_python" value="true"/>
+        <parameter key="package_manager" value="conda (anaconda)"/>
+        <parameter key="use_macros" value="false"/>
+      </operator>
+      <connect from_port="input 1" to_op="Parse Kafka Messages" to_port="input 1"/>
+      <connect from_op="Parse Kafka Messages" from_port="output 1" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="source_input 2" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+  <title>Parse Kafka from JSON to DataFrame</title>
+  <icon>data_table.png</icon>
+  <description/>
+  <synopsis>Parse the value content of Kafka messages in a DataFrame</synopsis>
+  <number-of-inputs>1</number-of-inputs>
+  <number-of-outputs>1</number-of-outputs>
+  <defines-optionals>true</defines-optionals>
+  <param-ordering>true</param-ordering>
+  <gets-random-seed>true</gets-random-seed>
+  <custom-operator-type>standard</custom-operator-type>
+  <template-parameters/>
+  <input-docu>
+    <port>
+      <type>com.rapidminer.operator.IOObject</type>
+      <description>Kafka input</description>
+    </port>
+  </input-docu>
+  <output-docu>
+    <port>
+      <type>com.rapidminer.operator.IOObject</type>
+      <description>table</description>
+    </port>
+  </output-docu>
+  <tutorials/>
+</process>

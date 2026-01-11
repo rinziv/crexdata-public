@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="10.5.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="10.5.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="python_scripting:execute_python" compatibility="10.1.002" expanded="true" height="103" name="Predict and Explain" width="90" x="246" y="34">
+        <parameter key="script" value="import pandas as pd&#10;import numpy as np&#10;import json&#10;import heapq&#10;import joblib&#10;import time&#10;&#10;from lore_sa.dataset import TabularDataset&#10;from lore_sa.bbox.sklearn_classifier_bbox import sklearnBBox&#10;from lore_sa.lore import TabularGeneticGeneratorLore&#10;&#10;# ------------------------------------------------------------------&#10;# Feature mapping for better readability&#10;# ------------------------------------------------------------------&#10;featureMap = {&#10;    'Tskin': 'Skin Temperature',&#10;    'Tamb': 'Ambient Temperature',&#10;    'ambient_RH': 'Ambient Humidity',&#10;    'skin_RH': 'Skin Humidity',&#10;    'swr': 'Sweat Rate',&#10;    'HR': 'Heart Rate',&#10;    'HR_confid': 'Heart Rate Confidence',&#10;    'ACT_est': 'Activity Estimate',&#10;    'Tskin_rolling_mean': 'Skin Temp (Avg)',&#10;    'Tamb_rolling_mean': 'Ambient Temp (Avg)',&#10;    'ambient_RH_rolling_mean': 'Ambient RH (Avg)',&#10;    'skin_RH_rolling_mean': 'Skin RH (Avg)',&#10;    'swr_rolling_mean': 'Sweat Rate (Avg)',&#10;    'HR_rolling_mean': 'Heart Rate (Avg)',&#10;    'HR_confid_rolling_mean': 'HR Confidence (Avg)',&#10;    'ACT_est_rolling_mean': 'Activity Est (Avg)',&#10;    'Tskin_rolling_std': 'Skin Temp (Variability)',&#10;    'Tamb_rolling_std': 'Ambient Temp (Variability)',&#10;    'ambient_RH_rolling_std': 'Ambient RH (Variability)',&#10;    'skin_RH_rolling_std': 'Skin RH (Variability)',&#10;    'swr_rolling_std': 'Sweat Rate (Variability)',&#10;    'HR_rolling_std': 'Heart Rate (Variability)',&#10;    'HR_confid_rolling_std': 'HR Confidence (Variability)',&#10;    'ACT_est_rolling_std': 'Activity Est (Variability)'&#10;}&#10;&#10;&#10;def prepare_lore(X, y, model):&#10;    &quot;&quot;&quot;Recreate the LORE explainer&quot;&quot;&quot;&#10;    from pandas import DataFrame&#10;    &#10;    df_train = DataFrame(X.values if hasattr(X, 'values') else X, &#10;                        columns=X.columns if hasattr(X, 'columns') else range(X.shape[1]))&#10;    df_train['exhaustion'] = y.copy(deep=True)[&quot;exhaustion&quot;] if hasattr(y, 'copy') else y&#10;    &#10;    dataset = TabularDataset(df_train, class_name=&quot;exhaustion&quot;)&#10;    dataset.update_descriptor()&#10;    bbox = sklearnBBox(model)&#10;    tabularLore = TabularGeneticGeneratorLore(bbox, dataset)&#10;    &#10;    return tabularLore&#10;&#10;&#10;def rm_main(data):&#10;    print(&quot;=&quot;*70)&#10;    print(&quot;STARTING rm_main EXECUTION&quot;)&#10;    print(&quot;=&quot;*70)&#10;    &#10;    # Display the type of the input data&#10;    print(f&quot;\n[INFO] Type of input data: {type(data)}&quot;)&#10;&#10;    # check if data is an empty DataFrame&#10;    if data.empty:&#10;        print(&quot;[WARNING] Input data is empty.&quot;)&#10;        return pd.DataFrame(), pd.DataFrame()&#10;&#10;    # Access the data (display first few rows)&#10;    print(f&quot;[INFO] Input data shape: {data.shape} ({data.shape[0]} rows, {data.shape[1]} columns)&quot;)&#10;    print(&quot;\n[INFO] Input data preview:&quot;)&#10;    print(data.head())&#10;&#10;    # rearrange columns&#10;    data = data[['id', 'ts', 'latitude', 'longitude', 'Phase'] + [col for col in data.columns if col not in&#10;                                                                  ['id', 'ts', 'latitude', 'longitude', 'Phase']]]&#10;&#10;    print(&quot;\n&quot; + &quot;-&quot;*70)&#10;    print(&quot;LOADING MODEL AND TRAINING DATA&quot;)&#10;    print(&quot;-&quot;*70)&#10;    &#10;    # Load the model&#10;    print(&quot;[1/2] Loading model from '../processes/rf_model_rolling_w5.joblib'...&quot;)&#10;    start_time = time.time()&#10;    model = joblib.load(&quot;../processes/rf_model_rolling_w5.joblib&quot;)&#10;    load_time = time.time() - start_time&#10;    print(f&quot;[✓] Model loaded successfully in {load_time:.2f} seconds&quot;)&#10;    &#10;    # Load training data&#10;    print(&quot;[2/2] Loading training data from '../processes/rf_model_rolling_w5_training_data_salvo.joblib'...&quot;)&#10;    start_time = time.time()&#10;    training_data = joblib.load(&quot;../processes/rf_model_rolling_w5_training_data_salvo.joblib&quot;)&#10;    load_time = time.time() - start_time&#10;    print(f&quot;[✓] Training data loaded successfully in {load_time:.2f} seconds&quot;)&#10;    print(f&quot;     Training data shape: X={training_data['X'].shape}, y={training_data['y'].shape}&quot;)&#10;    &#10;    print(&quot;\n&quot; + &quot;-&quot;*70)&#10;    print(&quot;CREATING EXPLAINER&quot;)&#10;    print(&quot;-&quot;*70)&#10;    &#10;    # Recreate the explainer using training data&#10;    print(&quot;[INFO] Recreating LORE explainer (this may take a while)...&quot;)&#10;    start_time = time.time()&#10;    explainer = prepare_lore(training_data['X'], training_data['y'], model)&#10;    explainer_time = time.time() - start_time&#10;    print(f&quot;[✓] Explainer created successfully in {explainer_time:.2f} seconds&quot;)&#10;&#10;    df = data.copy(deep=True)&#10;    &#10;    # Calculate number of iterations&#10;    num_rows = len(df)&#10;    print(&quot;\n&quot; + &quot;-&quot;*70)&#10;    print(&quot;GENERATING PREDICTIONS AND EXPLANATIONS&quot;)&#10;    print(&quot;-&quot;*70)&#10;    print(f&quot;[INFO] Total iterations to process: {num_rows}&quot;)&#10;&#10;    # Iterate over each row in the DataFrame&#10;    predictions = []  # this will hold all predictions&#10;    explanations = []  # this will hold all explanations&#10;    &#10;    iteration_start_time = time.time()&#10;    first_iteration_time = None&#10;    &#10;    for idx, row in enumerate(df.itertuples(), start=1):&#10;        if idx == 1:&#10;            print(f&quot;\n[ITERATION {idx}/{num_rows}] Starting first iteration...&quot;)&#10;            iter_start = time.time()&#10;        &#10;        # get the values of row as a numpy array, excluding id, ts, latitude, longitude, Phase&#10;        instance = np.array(row[6:])  # Adjust the index based on the actual position of your features&#10;        prediction = model.predict(instance.reshape(1, -1))[0]&#10;&#10;        predictions.append(f&quot;{prediction}&quot;)&#10;        &#10;        try:&#10;            explanation = explainer.explain(instance)&#10;#            print(&quot;Explanation ==============&gt;&quot;, explanation)&#10;            fi = explanation.get('feature_importances', {})&#10;            print(&quot;FI ============&gt;&quot;, fi)&#10;            print(&quot;Prediction&quot;, prediction)&#10;            # select only the top 3 features sorted by value descending&#10;            top_features = dict(sorted(fi, key=lambda item: abs(item[1]), reverse=True)[:3])&#10;            str_top_features = '\n'.join([f&quot;{featureMap.get(k, k)}: {v:.4f}&quot; for k, v in top_features.items()])&#10;            explanations.append(str_top_features)&#10;            print(&quot;Top Feautres ====&gt;&quot;, str_top_features)&#10;        except Exception as e:&#10;            print(f&quot;[WARNING] Could not generate explanation for row {idx}: {e}&quot;)&#10;            explanations.append(&quot;Explanation not available&quot;)&#10;        &#10;        if idx == 1:&#10;            first_iteration_time = time.time() - iter_start&#10;            print(f&quot;[✓] First iteration completed in {first_iteration_time:.2f} seconds&quot;)&#10;        &#10;        # Print progress every 10% of rows&#10;        if idx % max(1, num_rows // 10) == 0 or idx == num_rows:&#10;            elapsed = time.time() - iteration_start_time&#10;            avg_time_per_row = elapsed / idx&#10;            remaining = (num_rows - idx) * avg_time_per_row&#10;            print(f&quot;[PROGRESS] {idx}/{num_rows} ({100*idx/num_rows:.1f}%) - &quot;&#10;                  f&quot;Elapsed: {elapsed:.1f}s, ETA: {remaining:.1f}s&quot;)&#10;&#10;    total_iteration_time = time.time() - iteration_start_time&#10;    avg_time_per_iteration = total_iteration_time / num_rows if num_rows &gt; 0 else 0&#10;    &#10;    print(f&quot;\n[✓] All iterations completed!&quot;)&#10;    print(f&quot;    Total time: {total_iteration_time:.2f} seconds&quot;)&#10;    print(f&quot;    Average time per row: {avg_time_per_iteration:.3f} seconds&quot;)&#10;&#10;    df['prediction'] = predictions&#10;    df['explanation'] = explanations&#10;&#10;    print(&quot;\n&quot; + &quot;=&quot;*70)&#10;    print(&quot;rm_main EXECUTION COMPLETED SUCCESSFULLY&quot;)&#10;    print(&quot;=&quot;*70)&#10;    print(f&quot;[SUMMARY] Processed {num_rows} rows with predictions and explanations&quot;)&#10;    print(f&quot;[SUMMARY] Output DataFrame shape: {df.shape}&quot;)&#10;    &#10;    return df, data"/>
+        <parameter key="notebook_cell_tag_filter" value=""/>
+        <parameter key="use_default_python" value="true"/>
+        <parameter key="package_manager" value="conda (anaconda)"/>
+        <parameter key="use_macros" value="false"/>
+      </operator>
+      <connect from_port="input 1" to_op="Predict and Explain" to_port="input 1"/>
+      <connect from_op="Predict and Explain" from_port="output 1" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="source_input 2" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+  <title>Predict and Explain</title>
+  <icon>crystal_ball.png</icon>
+  <description/>
+  <synopsis/>
+  <number-of-inputs>1</number-of-inputs>
+  <number-of-outputs>1</number-of-outputs>
+  <defines-optionals>true</defines-optionals>
+  <param-ordering>true</param-ordering>
+  <gets-random-seed>true</gets-random-seed>
+  <custom-operator-type>standard</custom-operator-type>
+  <template-parameters/>
+  <input-docu>
+    <port>
+      <type>com.rapidminer.operator.IOObject</type>
+      <description>An input port</description>
+    </port>
+  </input-docu>
+  <output-docu>
+    <port>
+      <type>com.rapidminer.operator.IOObject</type>
+      <description>A result port</description>
+    </port>
+  </output-docu>
+  <tutorials>
+    <tutorial>
+      <title>Unknown title</title>
+      <description/>
+      <xml/>
+    </tutorial>
+  </tutorials>
+</process>

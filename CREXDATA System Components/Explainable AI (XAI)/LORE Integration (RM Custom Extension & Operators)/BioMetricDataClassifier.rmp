@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="10.5.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="10.5.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="10.5.000" expanded="true" height="68" name="Retrieve" width="90" x="45" y="187">
+        <parameter key="repository_entry" value="../data/biometric_data/df_bio_all_data_swr"/>
+      </operator>
+      <operator activated="true" class="python_scripting:python_transformer" compatibility="10.1.002" expanded="true" height="124" name="Creating Rolling Window" width="90" x="179" y="187">
+        <parameter key="editable" value="true"/>
+        <parameter key="operator" value="{&#13;&#10;  &quot;name&quot;: &quot;Custom Python Transformer&quot;,&#13;&#10;  &quot;dropSpecial&quot;: false,&#13;&#10;  &quot;parameters&quot;: [&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;window_size&quot;,&#13;&#10;      &quot;type&quot;: &quot;integer&quot;,&#13;&#10;      &quot;description&quot;: &quot;The number of time steps to use for computing the rolling feature extraction\.&quot;,&#13;&#10;      &quot;value&quot;: 5&#10;    },&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;2nd_parameter&quot;,&#13;&#10;      &quot;type&quot;: &quot;integer&quot;,&#13;&#10;      &quot;description&quot;: &quot;This is an example of an mandatory integer parameter with a default value 100\.&quot;,&#13;&#10;      &quot;value&quot;: 100&#13;&#10;    },&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;3rd_parameter&quot;,&#13;&#10;      &quot;type&quot;: &quot;category&quot;,&#13;&#10;      &quot;description&quot;: &quot;An example of a categorical parameter\.&quot;,&#13;&#10;      &quot;categories&quot;: [&#13;&#10;        &quot;Category A&quot;,&#13;&#10;        &quot;Category B&quot;,&#13;&#10;        &quot;Category C&quot;,&#13;&#10;        &quot;Default Category&quot;&#13;&#10;      ],&#13;&#10;      &quot;value&quot;: &quot;Default Category&quot;&#13;&#10;    }&#13;&#10;  ],&#13;&#10;  &quot;inputs&quot;: [&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;data&quot;,&#13;&#10;      &quot;type&quot;: &quot;table&quot;&#13;&#10;    }&#13;&#10;  ],&#13;&#10;  &quot;outputs&quot;: [&#13;&#10;    {&#10;      &quot;name&quot;: &quot;out&quot;,&#10;      &quot;type&quot;: &quot;table&quot;&#10;    },&#13;&#10;    {&#10;      &quot;name&quot;: &quot;train&quot;,&#10;      &quot;type&quot;: &quot;table&quot;&#10;    },&#10;    {&#10;      &quot;name&quot;: &quot;test&quot;,&#10;      &quot;type&quot;: &quot;table&quot;&#10;    },&#10;    {&#13;&#10;      &quot;name&quot;: &quot;through&quot;,&#13;&#10;      &quot;type&quot;: &quot;table&quot;&#13;&#10;    }&#13;&#10;  ]&#13;&#10;}.import pandas as pd&#10;&#10;def create_rolling_features(data, window_size=5, cols_to_roll=[]):&#10;    df = data\.copy(deep=True)&#10;    df = df\.sort_values(['id', 'ts'])&#10;    for col in cols_to_roll:&#10;        df[f'{col}_rolling_mean'] = df\.groupby('id', observed=True)[col]\.transform(lambda x: x\.rolling(window=window_size, min_periods=1)\.mean())&#10;        df[f'{col}_rolling_std'] = df\.groupby('id', observed=True)[col]\.transform(lambda x: x\.rolling(window=window_size, min_periods=1)\.std(ddof=0))&#10;    df = df\.dropna()&#10;    return df&#10;&#10;def split_data(data, k):&#10;&#9;df = data\.copy(deep=True)&#10;&#9;df_train = pd\.DataFrame()&#10;&#9;df_test = pd\.DataFrame()&#10;&#9;ids = df['id']\.unique()&#10;&#9;&#10;&#9;&#10;&#9; # Creating the two datasets&#10;&#9;for element in ids:&#10;&#9;&#9;df1 = df\.loc[df['id'] == element]&#10;&#9;&#9;df1 = df1\.sort_values('ts')&#10;&#9;&#9;split_point = int(k * len(df1))&#10;&#9;&#9;train_df = df1[:split_point]&#10;&#9;&#9;test_df = df1[split_point:]&#10;&#9;&#9;df_train = pd\.concat([df_train, train_df])&#10;&#9;&#9;df_test = pd\.concat([df_test, test_df])&#9;&#10;&#9;&#10;&#9;return df_train, df_test&#10;&#13;&#10;# Mandatory main function\. This example expects a single input followed by the&#13;&#10;# parameter dictionary\.&#13;&#10;def rm_main(data, parameters):&#10;&#10;&#9;window_size = parameters['window_size']&#10;&#9;print(f&quot;Columns: {data\.columns}&quot;)&#10;&#10;&#9;df2_swr = create_rolling_features(data, window_size=window_size, cols_to_roll=['Tskin', 'Tamb', 'ambient_RH', 'skin_RH', 'swr', 'HR', 'HR_confid', 'ACT_est'])&#10;#&#9;df2_swr['exhaustion'] = df2_swr['exhaustion']\.astype(int)\.astype(str)&#10;&#9;&#10;&#9;df_train, df_test = split_data(df2_swr, 0\.75)&#10;&#9;_df_train = pd\.DataFrame(df_train\.values)&#10;&#9;_df_train\.columns = df_train\.columns&#10;&#10;&#9;print(f&quot;Comparison of types&quot;)&#10;&#9;print(f&quot; \.     {type(df_train)}&quot;)&#10;&#9;print(f&quot; \.     {type(_df_train)}&quot;)&#10;&#9;&#10;&#9;# Return the new data frame and pass through the input data\.&#13;&#10;&#9;return df2_swr, _df_train, df_test, data&#13;&#10;"/>
+        <parameter key="use_default_python" value="true"/>
+        <parameter key="package_manager" value="conda (anaconda)"/>
+        <parameter key="window_size" value="5"/>
+        <parameter key="2nd_parameter" value="100"/>
+        <parameter key="3rd_parameter" value="Default Category"/>
+      </operator>
+      <operator activated="false" class="store" compatibility="10.5.000" expanded="true" height="68" name="Store test" width="90" x="45" y="595">
+        <parameter key="repository_entry" value="../data/biometric_data/processed_test_swr"/>
+      </operator>
+      <operator activated="false" class="store" compatibility="10.5.000" expanded="true" height="68" name="Store Training" width="90" x="45" y="493">
+        <parameter key="repository_entry" value="../data/biometric_data/processed_train_swr"/>
+      </operator>
+      <operator activated="false" class="retrieve" compatibility="10.5.000" expanded="true" height="68" name="Retrive training" width="90" x="179" y="493">
+        <parameter key="repository_entry" value="../data/biometric_data/processed_train_swr"/>
+      </operator>
+      <operator activated="true" class="blending:select_attributes" compatibility="10.5.000" expanded="true" height="82" name="Select Attributes" width="90" x="380" y="85">
+        <parameter key="type" value="exclude attributes"/>
+        <parameter key="attribute_filter_type" value="a subset"/>
+        <parameter key="select_attribute" value=""/>
+        <parameter key="select_subset" value="age␞date␞gender␞height␞id␞intensity␞intensity_label␞session_id␞time␞ts␞weight"/>
+        <parameter key="also_apply_to_special_attributes_(id,_label..)" value="false"/>
+      </operator>
+      <operator activated="false" class="numerical_to_polynominal" compatibility="10.5.000" expanded="true" height="82" name="Numerical to Polynominal" width="90" x="514" y="187">
+        <parameter key="attribute_filter_type" value="single"/>
+        <parameter key="attribute" value="exhaustion"/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="numeric"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="real"/>
+        <parameter key="block_type" value="value_series"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_series_end"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+      </operator>
+      <operator activated="false" class="retrieve" compatibility="10.5.000" expanded="true" height="68" name="Retrive testset" width="90" x="179" y="595">
+        <parameter key="repository_entry" value="../data/biometric_data/processed_test_swr"/>
+      </operator>
+      <operator activated="true" class="blending:select_attributes" compatibility="10.5.000" expanded="true" height="82" name="Select Attributes (2)" width="90" x="380" y="340">
+        <parameter key="type" value="exclude attributes"/>
+        <parameter key="attribute_filter_type" value="a subset"/>
+        <parameter key="select_attribute" value=""/>
+        <parameter key="select_subset" value="age␞date␞gender␞height␞id␞intensity␞intensity_label␞session_id␞time␞ts␞weight"/>
+        <parameter key="also_apply_to_special_attributes_(id,_label..)" value="false"/>
+      </operator>
+      <operator activated="true" class="numerical_to_polynominal" compatibility="10.5.000" expanded="true" height="82" name="Numerical to Polynominal (2)" width="90" x="514" y="340">
+        <parameter key="attribute_filter_type" value="single"/>
+        <parameter key="attribute" value="exhaustion"/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="numeric"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="real"/>
+        <parameter key="block_type" value="value_series"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_series_end"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+      </operator>
+      <operator activated="false" class="apply_model" compatibility="10.5.000" expanded="true" height="82" name="Apply Model (2)" width="90" x="1117" y="493">
+        <list key="application_parameters"/>
+      </operator>
+      <operator activated="true" class="multiply" compatibility="10.5.000" expanded="true" height="103" name="Multiply" width="90" x="648" y="340"/>
+      <operator activated="true" class="blending:set_role" compatibility="10.5.000" expanded="true" height="82" name="Set Role (2)" width="90" x="782" y="238">
+        <list key="set_roles">
+          <parameter key="exhaustion" value="label"/>
+        </list>
+      </operator>
+      <operator activated="true" class="sample" compatibility="10.5.000" expanded="true" height="82" name="Sample" width="90" x="782" y="340">
+        <parameter key="sample" value="absolute"/>
+        <parameter key="balance_data" value="false"/>
+        <parameter key="sample_size" value="1"/>
+        <parameter key="sample_ratio" value="0.1"/>
+        <parameter key="sample_probability" value="0.1"/>
+        <list key="sample_size_per_class"/>
+        <list key="sample_ratio_per_class"/>
+        <list key="sample_probability_per_class"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+      </operator>
+      <operator activated="true" class="python_scripting:python_transformer" compatibility="10.1.002" expanded="true" height="82" name="LORE" width="90" x="1318" y="442">
+        <parameter key="editable" value="true"/>
+        <parameter key="operator" value="{&#13;&#10;  &quot;name&quot;: &quot;Custom Python Transformer&quot;,&#13;&#10;  &quot;dropSpecial&quot;: false,&#13;&#10;  &quot;parameters&quot;: [&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;model_name&quot;,&#13;&#10;      &quot;type&quot;: &quot;string&quot;,&#13;&#10;      &quot;description&quot;: &quot;This should contain the reference to a valid prefix to be used to select a model/explainer&quot;,&#13;&#10;      &quot;optional&quot;: false&#13;&#10;    },&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;2nd_parameter&quot;,&#13;&#10;      &quot;type&quot;: &quot;integer&quot;,&#13;&#10;      &quot;description&quot;: &quot;This is an example of an mandatory integer parameter with a default value 100\.&quot;,&#13;&#10;      &quot;value&quot;: 100&#13;&#10;    },&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;3rd_parameter&quot;,&#13;&#10;      &quot;type&quot;: &quot;category&quot;,&#13;&#10;      &quot;description&quot;: &quot;An example of a categorical parameter\.&quot;,&#13;&#10;      &quot;categories&quot;: [&#13;&#10;        &quot;Category A&quot;,&#13;&#10;        &quot;Category B&quot;,&#13;&#10;        &quot;Category C&quot;,&#13;&#10;        &quot;Default Category&quot;&#13;&#10;      ],&#13;&#10;      &quot;value&quot;: &quot;Default Category&quot;&#13;&#10;    }&#13;&#10;  ],&#13;&#10;  &quot;inputs&quot;: [&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;data&quot;,&#13;&#10;      &quot;type&quot;: &quot;table&quot;&#13;&#10;    }&#10;  ],&#13;&#10;  &quot;outputs&quot;: [&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;out&quot;,&#13;&#10;      &quot;type&quot;: &quot;table&quot;&#13;&#10;    },&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;through&quot;,&#13;&#10;      &quot;type&quot;: &quot;table&quot;&#13;&#10;    }&#13;&#10;  ]&#13;&#10;}.from pandas import DataFrame&#13;&#10;import dill&#10;&#13;&#10;# Mandatory main function\. This example expects a single input followed by the&#13;&#10;# parameter dictionary\.&#13;&#10;def rm_main(data, parameters):&#13;&#10;&#9;&#10;&#9;print(f&quot;data: {data\.shape}&quot;)&#10;&#10;&#9;with open(f&quot;\./{parameters['model_name']}\.joblib&quot;, &quot;rb&quot;) as f:&#10;&#9;&#9;model = dill\.load(f)&#10;&#10;&#9;with open(f&quot;\./{parameters['model_name']}_explainer\.joblib&quot;, &quot;rb&quot;) as f:&#10;&#9;&#9;explainer = dill\.load(f)&#10;&#10;&#9;cols = [c for c in data\.columns if c != &quot;exhaustion&quot;]  # all columns except 'exhaustion'&#10;&#9;class_column = data[&quot;exhaustion&quot;]&#10;&#9;table = DataFrame(data[cols]\.values, columns=cols)  # put 'exhaustion' at the end&#10;&#9;table[&quot;exhaustion&quot;] = class_column&#10;&#10;&#9;if model:&#10;&#9;&#9;print(&quot;Classifing the instances&quot;)&#10;&#9;&#9;prediction = model\.predict(table[cols]\.values)&#10;&#9;&#9;table[&quot;prediction&quot;] = prediction&#10;&#9;&#9;if explainer:&#10;&#9;&#9;&#9;print(&quot;Creating the explanation\.\.\.&quot;)&#10;&#9;&#9;&#9;explanation = explainer\.explain(table[cols]\.values[0])&#10;&#9;&#9;&#9;print(explanation)&#10;&#9;&#9;&#9;&#10;&#9;&#9;&#9;&#10;&#9;&#10;&#10;&#13;&#10;&#9;# Return the new data frame and pass through the input data\.&#13;&#10;&#9;return table, data&#13;&#10;"/>
+        <parameter key="use_default_python" value="false"/>
+        <parameter key="package_manager" value="conda (anaconda)"/>
+        <parameter key="conda_environment" value="internship_project"/>
+        <parameter key="model_name" value="rf_model_rolling_w5"/>
+        <parameter key="2nd_parameter" value="100"/>
+        <parameter key="3rd_parameter" value="Default Category"/>
+      </operator>
+      <operator activated="true" class="guess_types" compatibility="10.5.000" expanded="true" height="82" name="Guess Types" width="90" x="514" y="85">
+        <parameter key="attribute_filter_type" value="all"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="decimal_point_character" value="."/>
+      </operator>
+      <operator activated="true" class="blending:set_role" compatibility="10.5.000" expanded="true" height="82" name="Set Role" width="90" x="648" y="85">
+        <list key="set_roles">
+          <parameter key="exhaustion" value="label"/>
+        </list>
+      </operator>
+      <operator activated="true" class="python_scripting:python_learner" compatibility="10.1.002" expanded="true" height="82" name="Grid Search RF" width="90" x="782" y="85">
+        <parameter key="editable" value="true"/>
+        <parameter key="operator" value="{&#13;&#10;  &quot;name&quot;: &quot;Custom Python Learner&quot;,&#13;&#10;  &quot;dropSpecial&quot;: true,&#13;&#10;  &quot;capabilities&quot;: [&quot;numerical attributes&quot;, &quot;binominal label&quot;, &quot;polynominal label&quot;],&#13;&#10;  &quot;parameters&quot;: [&#13;&#10;    {&#13;&#10;      &quot;name&quot;: &quot;model_name&quot;,&#13;&#10;      &quot;description&quot;: &quot;Specify a name to identify the model to be learned\. The operator will create also an explainer, named with the same prefix&quot;,&#13;&#10;      &quot;optional&quot;: false,&#10;      &quot;value&quot;: &quot;my_model&quot;&#13;&#10;    }&#13;&#10;  ],&#13;&#10;  &quot;inputs&quot;: [&#13;&#10;  ],&#13;&#10;  &quot;outputs&quot;: [&#13;&#10;  ]&#13;&#10;}.from pandas import DataFrame&#13;&#10;import dill&#10;import os&#10;&#10;from sklearn\.naive_bayes import GaussianNB&#13;&#10;from sklearn\.ensemble import RandomForestClassifier&#10;from sklearn\.model_selection import RandomizedSearchCV&#10;&#10;from lore_sa\.dataset import TabularDataset&#10;from lore_sa\.lore import  TabularGeneticGeneratorLore, TabularRandomGeneratorLore&#10;from lore_sa\.bbox\.sklearn_classifier_bbox import sklearnBBox&#10;&#10;&#10;&#10;def prepare_lore(X, y, model):&#10;&#9;df_train = DataFrame(X\.values, columns = X\.columns)&#10;&#9;df_train['exhaustion'] = y\.copy(deep=True)[&quot;exhaustion&quot;]&#10;&#9;&#10;&#9;&#10;&#9;# force &quot;exhaustion&quot; to be a categorical variable&#10;&#9;df_train[&quot;exhaustion&quot;] = df_train[&quot;exhaustion&quot;]\.astype(int)\.astype(str)&#10;&#9;dataset = TabularDataset(df_train, class_name=&quot;exhaustion&quot;)&#10;&#9;dataset\.update_descriptor()&#10;&#9;bbox = sklearnBBox(model)&#10;&#9;tabularLore = TabularRandomGeneratorLore(bbox, dataset)&#10;&#10;&#9;return tabularLore&#10;&#10;&#13;&#10;# Mandatory training function\. When implementing a supervised learner, the&#13;&#10;# input data will be split into the feature vector X and the label vector y\.&#13;&#10;# Parameters are passed in as plain Python dictionary\.&#13;&#10;def rm_train(X, y, parameters):&#13;&#10;&#9;# This example does not make use of the parameter to configure the model\.&#13;&#10;&#9;# However, printing the dictionary will show its values in the log\.&#13;&#10;&#9;print(f&quot;My parameters: {parameters}&quot;)&#10;&#9;print(parameters)&#13;&#10;&#9;print(f&quot;training input data: {type(y)}&quot;)&#10;&#9;print(f&quot; \.   columns: {y\.columns}&quot;)&#10;&#9;# You can return any Python object as model\. Sci-kit learn classifiers such&#13;&#10;&#9;# as the Gaussian Naive Bayes are just one example\.&#13;&#10;#&#9;clf = GaussianNB()&#13;&#10;#&#9;model = clf\.fit(X, y)&#13;&#10;&#10;&#9;clf = RandomForestClassifier()&#10;    &#10;&#9;param_dict = {&#10;&#9;    'n_estimators': [50, 100],               # Numero alberi&#10;&#9;    'max_depth': [3, 5, 7],                  # Profondità&#10;&#9;    'min_samples_split': [10, 20],           # Dati per fare split&#10;&#9;    'min_samples_leaf': [5, 10],             # Foglie &#10;&#9;    'max_features': ['sqrt', 'log2'],        # Feature per split &#10;&#9;    'bootstrap': [True]#,                     # Obbligatorio per varietà&#10;&#9;    #'ccp_alpha': [0\.05, 0\.1, 0\.2]            # Pruning&#10;&#9;         }&#10;&#9;rands = RandomizedSearchCV(clf, param_dict, cv = 5, scoring = 'accuracy', refit = True, n_iter = 5)&#10;&#9;rands\.fit(X, y) &#10;&#9;&#10;&#9;clf = rands\.best_estimator_&#10;&#9;with open(f&quot;\./{parameters['model_name']}\.joblib&quot;, &quot;wb&quot;) as f:&#10;&#9;    dill\.dump(clf, f)&#10;&#10;&#9;explainer = prepare_lore(X, y, clf)&#10;&#9;# Save explainer&#10;&#9;with open(f&quot;\./{parameters['model_name']}_explainer\.joblib&quot;, &quot;wb&quot;) as f:&#10;&#9;    dill\.dump(explainer, f)&#10;&#9;    print(&quot;Creating the explanation\.\.\.&quot;)&#10;&#9;    explanation = explainer\.explain(X\.values[0])&#10;&#9;    print(explanation)&#10;&#9;&#9;&#9;&#10;&#10;&#10;&#9;return clf&#10;&#13;&#10;# Mandatory application function\. The input data set X is guaranteed to have&#13;&#10;# have the same columns and column order as seen during training\. The model is&#13;&#10;# the of the same type as the model return during training\.&#13;&#10;def rm_apply(X, model):&#13;&#10;&#9;prediction = DataFrame(model\.predict(X))&#13;&#10;&#9;probabilities = DataFrame(model\.predict_proba(X))&#13;&#10;&#9;probabilities\.columns = model\.classes_&#13;&#10;&#9;# The first return value must be a Pandas DataFrame with a single column&#13;&#10;&#9;# and of the size as X\. The second return value is optional and can be used&#13;&#10;&#9;# to return probabilities (if any)\.&#13;&#10;&#9;return prediction, probabilities&#13;&#10;"/>
+        <parameter key="use_default_python" value="false"/>
+        <parameter key="package_manager" value="conda (anaconda)"/>
+        <parameter key="conda_environment" value="internship_project"/>
+        <parameter key="python_binary" value="/Users/sax/github/Borsa_ricerca/.venv/bin/python"/>
+        <parameter key="model_name" value="rf_model_rolling_w5"/>
+      </operator>
+      <operator activated="true" class="apply_model" compatibility="10.5.000" expanded="true" height="82" name="Apply Model" width="90" x="983" y="238">
+        <list key="application_parameters"/>
+      </operator>
+      <operator activated="true" class="performance_classification" compatibility="10.5.000" expanded="true" height="82" name="Performance" width="90" x="1117" y="238">
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="accuracy" value="true"/>
+        <parameter key="classification_error" value="false"/>
+        <parameter key="kappa" value="false"/>
+        <parameter key="weighted_mean_recall" value="false"/>
+        <parameter key="weighted_mean_precision" value="false"/>
+        <parameter key="spearman_rho" value="false"/>
+        <parameter key="kendall_tau" value="false"/>
+        <parameter key="absolute_error" value="false"/>
+        <parameter key="relative_error" value="false"/>
+        <parameter key="relative_error_lenient" value="false"/>
+        <parameter key="relative_error_strict" value="false"/>
+        <parameter key="normalized_absolute_error" value="false"/>
+        <parameter key="root_mean_squared_error" value="false"/>
+        <parameter key="root_relative_squared_error" value="false"/>
+        <parameter key="squared_error" value="false"/>
+        <parameter key="correlation" value="false"/>
+        <parameter key="squared_correlation" value="false"/>
+        <parameter key="cross-entropy" value="false"/>
+        <parameter key="margin" value="false"/>
+        <parameter key="soft_margin_loss" value="false"/>
+        <parameter key="logistic_loss" value="false"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+        <list key="class_weights"/>
+      </operator>
+      <connect from_op="Retrieve" from_port="output" to_op="Creating Rolling Window" to_port="data"/>
+      <connect from_op="Creating Rolling Window" from_port="train" to_op="Select Attributes" to_port="example set input"/>
+      <connect from_op="Creating Rolling Window" from_port="test" to_op="Select Attributes (2)" to_port="example set input"/>
+      <connect from_op="Select Attributes" from_port="example set output" to_op="Guess Types" to_port="example set input"/>
+      <connect from_op="Select Attributes (2)" from_port="example set output" to_op="Numerical to Polynominal (2)" to_port="example set input"/>
+      <connect from_op="Numerical to Polynominal (2)" from_port="example set output" to_op="Multiply" to_port="input"/>
+      <connect from_op="Multiply" from_port="output 1" to_op="Set Role (2)" to_port="example set input"/>
+      <connect from_op="Multiply" from_port="output 2" to_op="Sample" to_port="example set input"/>
+      <connect from_op="Set Role (2)" from_port="example set output" to_op="Apply Model" to_port="unlabelled data"/>
+      <connect from_op="Sample" from_port="example set output" to_op="LORE" to_port="data"/>
+      <connect from_op="LORE" from_port="out" to_port="result 2"/>
+      <connect from_op="Guess Types" from_port="example set output" to_op="Set Role" to_port="example set input"/>
+      <connect from_op="Set Role" from_port="example set output" to_op="Grid Search RF" to_port="training set"/>
+      <connect from_op="Grid Search RF" from_port="model" to_op="Apply Model" to_port="model"/>
+      <connect from_op="Apply Model" from_port="labelled data" to_op="Performance" to_port="labelled data"/>
+      <connect from_op="Performance" from_port="performance" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <description align="center" color="green" colored="true" height="221" resized="true" width="159" x="146" y="109">Custom Operator</description>
+      <description align="center" color="green" colored="true" height="198" resized="false" width="159" x="753" y="10">Custom Operator</description>
+      <description align="center" color="green" colored="true" height="170" resized="true" width="143" x="1292" y="379">Custom Operator</description>
+    </process>
+  </operator>
+</process>
