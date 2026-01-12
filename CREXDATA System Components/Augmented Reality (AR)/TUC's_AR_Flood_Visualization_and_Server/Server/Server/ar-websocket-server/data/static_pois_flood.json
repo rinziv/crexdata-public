@@ -1,0 +1,317 @@
+[
+  {
+    "poiId": "1",
+    "poiType": "Hospital",
+    "position": {
+      "latitude": 62.83889183008048,
+      "longitude": 27.643905928856398
+    },
+    "properties": {
+      "name": "Pyörön terveysasema",
+      "description": "Public health center serving the Pyörö area in Kuopio, offering general medical services.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "poiId": "2",
+    "poiType": "School",
+    "position": {
+      "latitude": 62.83724879361549,
+      "longitude": 27.64158015982121
+    },
+    "properties": {
+      "name": "Pyörö School, Ala-Pyörö (primary school)",
+      "description": "Primary school providing education for children in the Ala-Pyörö area.",
+      "severity": "mid",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "poiId": "3",
+    "poiType": "School",
+    "position": {
+      "latitude": 62.835539580535425,
+      "longitude": 27.646408130270064
+    },
+    "properties": {
+      "name": "Tuuliviirin Päiväkoti",
+      "description": "Daycare center (päiväkoti) offering early childhood education and care.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "poiId": "4",
+    "poiType": "General",
+    "position": {
+      "latitude": 62.837220707008015,
+      "longitude": 27.658781163874846
+    },
+    "properties": {
+      "name": "Pohjois-Savon Pelastuslaitos, Petosen pelastusasema, Kuopio",
+      "description": "Petonen fire station, part of the North Savo Rescue Department, providing emergency response services.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 300
+    }
+  },
+  {
+    "poiId": "5",
+    "poiType": "Hospital",
+    "position": {
+      "latitude": 62.83625189872685,
+      "longitude": 27.658279978132917
+    },
+    "properties": {
+      "name": "Louhumäen palvelukoti",
+      "description": "Service home (palvelukoti) providing housing and care services, potentially for the elderly or individuals needing support.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "poiId": "6",
+    "poiType": "General",
+    "position": {
+      "latitude": 60.20331057144955,
+      "longitude": 24.96922901939773
+    },
+    "properties": {
+      "name": "Kauppakeskus Arabia",
+      "description": "Shopping center located in Helsinki, Finland, offering a variety of retail stores and services.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "poiId": "7",
+    "poiType": "School",
+    "position": {
+      "latitude": 60.20396545566789,
+      "longitude": 24.96249934771927
+    },
+    "properties": {
+      "name": "Helsinki Upper Secondary School of Natural Sciences",
+      "description": "Public secondary school in Helsinki focusing on natural sciences, providing education for students in grades 10-12.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "poiId": "8",
+    "poiType": "School",
+    "position": {
+      "latitude": 60.20689871579143,
+      "longitude": 24.959957491305488
+    },
+    "properties": {
+      "name": "Päiväkoti Kumpupilvi",
+      "description": "Daycare center (päiväkoti) providing early childhood education and care services.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "poiId": "9",
+    "poiType": "Hospital",
+    "position": {
+      "latitude": 60.21673596864488,
+      "longitude": 24.96301230343682
+    },
+    "properties": {
+      "name": "Forsby sjukhus",
+      "description": "Forsby Hospital, a healthcare facility in Helsinki, Finland, providing medical services.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "poiId": "10",
+    "poiType": "Hospital",
+    "position": {
+      "latitude": 60.20839307195524,
+      "longitude": 24.96609875477936
+    },
+    "properties": {
+      "name": "Päiväkoti Nurmikko",
+      "description": "Daycare center (päiväkoti) providing early childhood education and care services.",
+      "severity": "high",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "poiId": "11",
+    "poiType": "General",
+    "position": {
+      "latitude": 60.20505675715999,
+      "longitude": 24.94961928445864
+    },
+    "properties": {
+      "name": "Mainiokoti Sofia ja Severi",
+      "description": "Mainiokoti Sofia ja Severi, a service home (palvelukoti) providing housing and care services, potentially for the elderly or individuals needing support.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "poiId": "12",
+    "poiType": "School",
+    "position": {
+      "latitude": 60.20457429481909,
+      "longitude": 24.97441710227247
+    },
+    "properties": {
+      "name": "Arabia Comprehensive School",
+      "description": "Comprehensive school located in Helsinki, Finland, providing education for students in grades 1-9.",
+      "severity": "mid",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "poiId": "13",
+    "poiType": "General",
+    "position": {
+      "latitude": 51.54905985392496,
+      "longitude": 7.373408907801145
+    },
+    "properties": {
+      "name": "Maschinenfabrik Völkmann GmbH",
+      "description": "A machine factory in Dortmund, Germany, specializing in the production of industrial equipment.",
+      "severity": "low",
+      "timestamp": "2025-07-01T12:00:00Z",
+      "capacity": 150
+    }
+  },
+  {
+    "poiId": "14",
+    "poiType": "Hospital",
+    "position": {
+      "latitude": 51.54996445176018,
+      "longitude": 7.371538216398303
+    },
+    "properties": {
+      "name": "Praxis Bodelschwingh",
+      "description": "A medical practice in the Bodelschwingh area of Dortmund, providing general healthcare services.",
+      "severity": "low",
+      "timestamp": "2025-07-01T12:00:00Z",
+      "capacity": 50
+    }
+  },
+  {
+    "poiId": "15",
+    "poiType": "Church",
+    "position": {
+      "latitude": 51.55064004836408,
+      "longitude": 7.37102785261388
+    },
+    "properties": {
+      "name": "Katholische Kirche Mariä Heimsuchung",
+      "description": "A Catholic church that can serve as a shelter or landmark during an emergency.",
+      "severity": "low",
+      "timestamp": "2025-07-01T12:00:00Z",
+      "capacity": 200
+    }
+  },
+  {
+    "poiId": "16",
+    "poiType": "General",
+    "position": {
+      "latitude": 51.54956166142219,
+      "longitude": 7.375212216005906
+    },
+    "properties": {
+      "name": "DG Motoren",
+      "description": "An automotive service center specializing in engine repair and maintenance.",
+      "severity": "low",
+      "timestamp": "2025-07-01T12:00:00Z",
+      "capacity": 20
+    }
+  },
+  {
+    "poiId": "17",
+    "poiType": "Station",
+    "position": {
+      "latitude": 51.54844125539304,
+      "longitude": 7.374946411424433
+    },
+    "properties": {
+      "name": "Fake Station",
+      "description": "A designated station point for emergency coordination or evacuation.",
+      "severity": "mid",
+      "timestamp": "2025-07-01T12:00:00Z",
+      "capacity": 300
+    }
+  },
+  {
+    "poiId": "18",
+    "poiType": "Hospital",
+    "position": {
+      "latitude": 51.55101722046053,
+      "longitude": 7.372460416039898
+    },
+    "properties": {
+      "name": "Die etwas andere Zahnarztpraxis",
+      "description": "A dental clinic that could potentially offer emergency first aid.",
+      "severity": "low",
+      "timestamp": "2025-07-01T12:00:00Z",
+      "capacity": 30
+    }
+  },
+  {
+    "poiId": "19",
+    "poiType": "School",
+    "position": {
+      "latitude": 51.550701295850374,
+      "longitude": 7.3732939107949695
+    },
+    "properties": {
+      "name": "Fake School",
+      "description": "A school building that can be used as a temporary shelter or command post.",
+      "severity": "mid",
+      "timestamp": "2025-07-01T12:00:00Z",
+      "capacity": 400
+    }
+  },
+  {
+    "poiId": "20",
+    "poiType": "Manhole",
+    "position": {
+      "latitude": 51.54908430742102,
+      "longitude": 7.373977526617277
+    },
+    "properties": {
+      "name": "Manhole",
+      "description": "A critical infrastructure point related to the sewage or water system. Potential hazard in flood scenarios.",
+      "severity": "high",
+      "timestamp": "2025-07-01T12:00:00Z",
+      "capacity": 0
+    }
+  },
+  {
+    "poiId": "21",
+    "poiType": "General",
+    "position": {
+      "latitude": 35.51414948647567,
+      "longitude": 24.032022239485126
+    },
+    "properties": {
+      "name": "Spielplatz Im Odemsloh",
+      "description": "A public playground. Can be a gathering point or a potential hazard area depending on the emergency.",
+      "severity": "low",
+      "timestamp": "2025-07-01T12:00:00Z",
+      "capacity": 100
+    }
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "name": "Server",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.19.2",
+    "kafkajs": "^2.2.4",
+    "mysql2": "^3.10.1",
+    "pg": "^8.12.0",
+    "ws": "^8.16.0"
+  }
+}

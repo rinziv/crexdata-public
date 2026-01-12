@@ -1,0 +1,35 @@
+{
+  "name": "ar-websocket-server",
+  "version": "1.0.0",
+  "description": "WebSocket server for AR system with Kafka integration",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "debug": "node --inspect src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:kafka": "node test/run-kafka-tests.js",
+    "test:kafka:publish": "node test/run-kafka-tests.js publish-only",
+    "test:kafka:full": "node test/run-kafka-tests.js full-test",
+    "test:kafka:jest": "node test/run-kafka-tests.js jest",
+    "test:kafka:consumer": "node test/run-kafka-tests.js consumer",
+    "test:kafka:interactive": "node test/run-kafka-tests.js interactive",
+    "test:kafka:direct": "node test/kafka-publisher-test.js",
+    "consumer": "node test/kafka-interactive-consumer.js",
+    "interactive": "node test/kafka-interactive-manager.js"
+  },
+  "keywords": [
+    "websocket",
+    "kafka",
+    "ar",
+    "hololens",
+    "node"
+  ],
+  "author": "Your Name",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "kafkajs": "^2.2.4",
+    "ws": "^8.5.0"
+  }
+}

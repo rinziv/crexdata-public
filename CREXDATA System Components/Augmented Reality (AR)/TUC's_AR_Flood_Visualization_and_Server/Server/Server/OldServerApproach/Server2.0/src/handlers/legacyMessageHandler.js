@@ -1,0 +1,1 @@
+// This file exports functions for handling legacy message formats, ensuring backward compatibility with older clients.

@@ -1,0 +1,383 @@
+[
+  {
+    "case": "teamMember",
+    "id": 45,
+    "name": "paul george",
+    "latitude": 47.157721,
+    "longitude": 11.312271
+  },
+  {
+    "case": "fireLocation",
+    "id": 1,
+    "latitude": 47.15286801792434,
+    "longitude": 11.31356381926193
+  },
+  {
+    "case": "POI",
+    "poiId": "emergency-124-finland",
+    "poiType": "RiskZone",
+    "position": {
+      "latitude": 47.155268356162324,
+      "longitude": 11.311414973771052
+    },
+    "properties": {
+      "name": "Pyörö School, Ala-Pyörö (primary school)",
+      "description": "Primary school providing education for children in the Ala-Pyörö area.",
+      "severity": "mid",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "emergency-125-finland",
+    "poiType": "SettlementArea",
+    "position": {
+      "latitude": 47.15773710913032,
+      "longitude": 11.311833779524843
+    },
+    "properties": {
+      "name": "Tuuliviirin Päiväkoti",
+      "description": "Daycare center (päiväkoti) offering early childhood education and care.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "emergency-126-finland",
+    "poiType": "General",
+    "position": {
+      "latitude": 62.837220707008015,
+      "longitude": 27.658781163874846
+    },
+    "properties": {
+      "name": "Pohjois-Savon Pelastuslaitos, Petosen pelastusasema, Kuopio",
+      "description": "Petonen fire station, part of the North Savo Rescue Department, providing emergency response services.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 300
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "emergency-127-finland",
+    "poiType": "Hospital",
+    "position": {
+      "latitude": 62.83625189872685,
+      "longitude": 27.658279978132917
+    },
+    "properties": {
+      "name": "Louhumäen palvelukoti",
+      "description": "Service home (palvelukoti) providing housing and care services, potentially for the elderly or individuals needing support.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "emergency-128",
+    "poiType": "General",
+    "position": {
+      "latitude": 60.20331057144955,
+      "longitude": 24.96922901939773
+    },
+    "properties": {
+      "name": "Kauppakeskus Arabia",
+      "description": "Shopping center located in Helsinki, Finland, offering a variety of retail stores and services.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "emergency-128",
+    "poiType": "School",
+    "position": {
+      "latitude": 60.20396545566789,
+      "longitude": 24.96249934771927
+    },
+    "properties": {
+      "name": "Helsinki Upper Secondary School of Natural Sciences",
+      "description": "Public secondary school in Helsinki focusing on natural sciences, providing education for students in grades 10-12.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "emergency-128",
+    "poiType": "School",
+    "position": {
+      "latitude": 60.20689871579143,
+      "longitude": 24.959957491305488
+    },
+    "properties": {
+      "name": "Päiväkoti Kumpupilvi",
+      "description": "Daycare center (päiväkoti) providing early childhood education and care services.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "emergency-128",
+    "poiType": "Hospital",
+    "position": {
+      "latitude": 60.21673596864488,
+      "longitude": 24.96301230343682
+    },
+    "properties": {
+      "name": "Forsby sjukhus",
+      "description": "Forsby Hospital, a healthcare facility in Helsinki, Finland, providing medical services.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "emergency-128",
+    "poiType": "Hospital",
+    "position": {
+      "latitude": 60.20839307195524,
+      "longitude": 24.96609875477936
+    },
+    "properties": {
+      "name": "Päiväkoti Nurmikko",
+      "description": "Daycare center (päiväkoti) providing early childhood education and care services.",
+      "severity": "high",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "emergency-128",
+    "poiType": "General",
+    "position": {
+      "latitude": 60.20505675715999,
+      "longitude": 24.94961928445864
+    },
+    "properties": {
+      "name": "Mainiokoti Sofia ja Severi",
+      "description": "Mainiokoti Sofia ja Severi, a service home (palvelukoti) providing housing and care services, potentially for the elderly or individuals needing support.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "emergency-128",
+    "poiType": "School",
+    "position": {
+      "latitude": 60.20457429481909,
+      "longitude": 24.97441710227247
+    },
+    "properties": {
+      "name": "Arabia Comprehensive School",
+      "description": "Comprehensive school located in Helsinki, Finland, providing education for students in grades 1-9.",
+      "severity": "mid",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 250
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "stubai-001",
+    "poiType": "General",
+    "position": {
+      "latitude": 47.148056,
+      "longitude": 11.309444
+    },
+    "properties": {
+      "name": "Aussichtsplattform Stubaiblick",
+      "description": "Viewing platform with lots of tourists. Social media posts report smoke sightings from this location.",
+      "severity": "mid",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 100
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "stubai-002",
+    "poiType": "General",
+    "position": {
+      "latitude": 47.145278,
+      "longitude": 11.272778
+    },
+    "properties": {
+      "name": "Schlicker Seespitze",
+      "description": "Mountain top location where hikers reported seeing fire below. Critical observation point.",
+      "severity": "high",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 20
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "stubai-003",
+    "poiType": "RiskZone",
+    "position": {
+      "latitude": 47.147778,
+      "longitude": 11.321389
+    },
+    "properties": {
+      "name": "Galtalm",
+      "description": "Mountain hut where guests reported fire. Vulnerable location with tourists requiring evacuation support.",
+      "severity": "high",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 50
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "stubai-004",
+    "poiType": "RiskZone",
+    "position": {
+      "latitude": 47.155278,
+      "longitude": 11.343333
+    },
+    "properties": {
+      "name": "Kreuzjochbahn",
+      "description": "Cable car station where hikers in gondolas reported nearby fire. Critical evacuation point.",
+      "severity": "high",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 200
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "stubai-005",
+    "poiType": "WaterSource",
+    "position": {
+      "latitude": 47.156389,
+      "longitude": 11.313889
+    },
+    "properties": {
+      "name": "Fire Fighting Lake",
+      "description": "Lake designated for fire fighting operations. Primary water source for aerial and ground firefighting efforts.",
+      "severity": "low",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 1000
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "stubai-006",
+    "poiType": "RiskZone",
+    "position": {
+      "latitude": 47.157222,
+      "longitude": 11.3325
+    },
+    "properties": {
+      "name": "Fronebenalm",
+      "description": "Vulnerable location due to tourists. Mountain hut requiring priority evacuation planning.",
+      "severity": "high",
+      "timestamp": "2023-04-03T15:30:00Z",
+      "capacity": 75
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "exercise-001",
+    "poiType": "fireLocation",
+    "position": {
+      "latitude": 47.152586,
+      "longitude": 11.313302
+    },
+    "properties": {
+      "name": "Brandplatz Krinnenköpfe",
+      "description": "Primary fire simulation site below Krinnenköpfe. Main exercise fire location at 1,800m elevation.",
+      "severity": "high",
+      "timestamp": "2025-10-04T12:00:00Z",
+      "capacity": 30
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "exercise-003",
+    "poiType": "WaterSource",
+    "position": {
+      "latitude": 47.157767,
+      "longitude": 11.311378
+    },
+    "properties": {
+      "name": "Speicherteich Panoramasee",
+      "description": "Water reservoir for helicopter operations. 6,000L collapsible container and water intake point for firefighting.",
+      "severity": "low",
+      "timestamp": "2025-10-04T09:00:00Z",
+      "capacity": 6000
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "exercise-004",
+    "poiType": "General",
+    "position": {
+      "latitude": 47.155,
+      "longitude": 11.31
+    },
+    "properties": {
+      "name": "Gemeindesaal Telfes",
+      "description": "Community hall serving as firefighter assembly point and briefing location for exercise operations.",
+      "severity": "low",
+      "timestamp": "2025-10-04T09:00:00Z",
+      "capacity": 100
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "exercise-005",
+    "poiType": "General",
+    "position": {
+      "latitude": 47.154,
+      "longitude": 11.312
+    },
+    "properties": {
+      "name": "Einsatzleitung Telfes",
+      "description": "Fire department command center coordinating helicopter operations and ground firefighting activities.",
+      "severity": "low",
+      "timestamp": "2025-10-04T09:00:00Z",
+      "capacity": 10
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "exercise-007",
+    "poiType": "General",
+    "position": {
+      "latitude": 47.154586,
+      "longitude": 11.313102
+    },
+    "properties": {
+      "name": "Safety Zone Steinbock Platform",
+      "description": "Personnel and material storage platform at fire site. Safe zone for crew rest and equipment management.",
+      "severity": "low",
+      "timestamp": "2025-10-04T12:00:00Z",
+      "capacity": 15
+    }
+  },
+  {
+    "case": "POI",
+    "poiId": "exercise-008",
+    "poiType": "WaterSource",
+    "position": {
+      "latitude": 47.153586,
+      "longitude": 11.313502
+    },
+    "properties": {
+      "name": "Alu Behälter 3000L",
+      "description": "3,000L aluminum water container at fire site for direct firefighting operations and helicopter water drops.",
+      "severity": "low",
+      "timestamp": "2025-10-04T12:00:00Z",
+      "capacity": 3000
+    }
+  }
+]

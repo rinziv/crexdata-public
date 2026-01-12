@@ -1,0 +1,53 @@
+version: "2"
+
+networks:
+  streaming:
+    driver: bridge
+services:
+  kafka:
+    image: docker.io/bitnami/kafka:3.7
+    hostname: server.crexdata.eu
+    ports:
+      - "9092:9092"
+      - '9094:9094'
+    volumes:
+      - "C:/kafka/kafka-persistence-vol:/bitnami/kafka"
+      - 'C:/kafka/keystore/kafka.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
+      - 'C:/kafka/truststore/kafka.truststore.jks:/opt/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
+    networks:
+      - streaming
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=SASL_SSL://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:SASL_PLAINTEXT,SASL_SSL:SASL_SSL
+      - KAFKA_CFG_ADVERTISED_LISTENERS=SASL_SSL://server.crexdata.eu:9092
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=SASL_SSL
+      - KAFKA_CLIENT_LISTENER_NAME=SASL_SSL # Remove this line if consumer/producer.properties are not required	
+      # SASL
+      - KAFKA_CONTROLLER_USER=controller_user
+      - KAFKA_CONTROLLER_PASSWORD=controller_password
+      - KAFKA_CLIENT_USERS=user
+      - KAFKA_CLIENT_PASSWORDS=password
+      - KAFKA_INTER_BROKER_USER=interbroker_user
+      - KAFKA_INTER_BROKER_PASSWORD=interbroker_password
+      - KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL=PLAIN
+      - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN
+      # SSL
+      - KAFKA_TLS_TYPE=JKS # or PEM
+      - KAFKA_CERTIFICATE_PASSWORD=crexdata
+
+      # - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://0.0.0.0:9094
+      # - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092,EXTERNAL://server.crexdata.eu:9094
+      # - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      # - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+
+      # additional Settings
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+volumes:
+  kafka_data:
+    driver: local
