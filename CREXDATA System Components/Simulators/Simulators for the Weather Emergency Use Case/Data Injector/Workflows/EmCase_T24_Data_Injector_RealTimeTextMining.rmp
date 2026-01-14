@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="10.5.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="10.5.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="open_file" compatibility="10.5.000" expanded="true" height="68" name="Open File" width="90" x="45" y="289">
+        <parameter key="resource_type" value="repository blob entry"/>
+        <parameter key="repository_entry" value="../Datasets/social_media_posts/tweets_flood_Dortmund.csv"/>
+      </operator>
+      <operator activated="true" class="read_csv" compatibility="10.5.000" expanded="true" height="68" name="Read CSV" width="90" x="179" y="289">
+        <parameter key="column_separators" value=";"/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="multiline_text" value="false"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="starting_row" value="1"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="infinity_representation" value=""/>
+        <parameter key="date_format" value=""/>
+        <parameter key="use_header_row" value="true"/>
+        <parameter key="header_row" value="1"/>
+        <parameter key="first_row_as_names" value="true"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="Europe/Berlin"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="SYSTEM"/>
+        <parameter key="read_all_values_as_polynominal" value="false"/>
+        <list key="data_set_meta_data_information"/>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+      </operator>
+      <operator activated="true" class="process_defined_operators:category_parameter_macro" compatibility="2.0.000" expanded="true" height="82" name="Category Parameter Macro" width="90" x="45" y="34">
+        <enumeration key="possible_values">
+          <parameter key="value" value="hours"/>
+          <parameter key="value" value="minutes"/>
+          <parameter key="value" value="seconds"/>
+          <parameter key="value" value="millis"/>
+        </enumeration>
+        <parameter key="macro" value="TimeInterval"/>
+        <parameter key="value" value="seconds"/>
+        <parameter key="set_as_integer_macro" value="false"/>
+        <parameter key="editable" value="true"/>
+      </operator>
+      <operator activated="true" class="generate_macro" compatibility="10.5.000" expanded="true" height="82" name="TimeUnit" width="90" x="179" y="34">
+        <list key="function_descriptions">
+          <parameter key="TimeUnit" value="if(%{TimeInterval}==&quot;hours&quot;,&quot;DATE_UNIT_HOUR&quot;,&#13;&#10;(if(%{TimeInterval}==&quot;minutes&quot;,&quot;DATE_UNIT_MINUTE&quot;,&#13;&#10;(if(%{TimeInterval}==&quot;seconds&quot;,&quot;DATE_UNIT_SECOND&quot;,&#13;&#10;&quot;DATE_UNIT_MILLISECOND&quot;)))))"/>
+        </list>
+      </operator>
+      <operator activated="true" class="set_macros" compatibility="10.5.000" expanded="true" height="68" name="Set Macros" width="90" x="380" y="34">
+        <list key="macros">
+          <parameter key="StartTimestamp" value="2025-11-24T15:13:00.000+0100"/>
+        </list>
+        <description align="center" color="yellow" colored="true" width="126">set current time</description>
+      </operator>
+      <operator activated="true" class="process_defined_operators:category_parameter_macro" compatibility="2.0.000" expanded="true" height="68" name="Category Parameter Macro (2)" width="90" x="45" y="136">
+        <enumeration key="possible_values">
+          <parameter key="value" value="historicalTimestamp"/>
+          <parameter key="value" value="newTimestamp"/>
+        </enumeration>
+        <parameter key="macro" value="mode"/>
+        <parameter key="value" value="newTimestamp"/>
+        <parameter key="set_as_integer_macro" value="false"/>
+        <parameter key="editable" value="true"/>
+        <description align="center" color="yellow" colored="true" width="126">Select mode</description>
+      </operator>
+      <operator activated="true" class="blending:select_attributes" compatibility="10.5.000" expanded="true" height="82" name="Select Attributes" width="90" x="313" y="289">
+        <parameter key="type" value="exclude attributes"/>
+        <parameter key="attribute_filter_type" value="a subset"/>
+        <parameter key="select_attribute" value=""/>
+        <parameter key="select_subset" value="phase␞typ␞is_relevant"/>
+        <parameter key="also_apply_to_special_attributes_(id,_label..)" value="false"/>
+        <description align="center" color="yellow" colored="true" width="126">Select relevant attributes from input</description>
+      </operator>
+      <operator activated="true" class="branch" compatibility="10.5.000" expanded="true" height="103" name="Branch" width="90" x="447" y="289">
+        <parameter key="condition_type" value="expression"/>
+        <parameter key="expression" value="%{mode} == &quot;historicalTimestamp&quot;"/>
+        <parameter key="io_object" value="ANOVAMatrix"/>
+        <parameter key="return_inner_output" value="true"/>
+        <process expanded="true">
+          <connect from_port="input 1" to_port="input 1"/>
+          <portSpacing port="source_condition" spacing="0"/>
+          <portSpacing port="source_input 1" spacing="0"/>
+          <portSpacing port="source_input 2" spacing="0"/>
+          <portSpacing port="sink_input 1" spacing="0"/>
+          <portSpacing port="sink_input 2" spacing="0"/>
+        </process>
+        <process expanded="true">
+          <operator activated="true" class="blending:generate_columns" compatibility="10.5.000" expanded="true" height="82" name="Generate New TimeStamp (2)" width="90" x="45" y="85">
+            <list key="function_descriptions">
+              <parameter key="TimeStamp" value="%{StartTimestamp}"/>
+            </list>
+            <parameter key="keep_all_columns" value="true"/>
+            <parameter key="default_time_zone" value="Europe/Berlin"/>
+            <description align="center" color="yellow" colored="true" width="126">Generate New TimeStamp for Streaming</description>
+          </operator>
+          <operator activated="true" class="nominal_to_date" compatibility="10.5.000" expanded="true" height="82" name="Nominal to Date" width="90" x="179" y="85">
+            <parameter key="attribute_name" value="TimeStamp"/>
+            <parameter key="date_type" value="date"/>
+            <parameter key="date_format" value="yyyy-MM-dd'T'HH:mm:ss.SSSZ"/>
+            <parameter key="time_zone" value="Europe/Berlin"/>
+            <parameter key="locale" value="English (United States)"/>
+            <parameter key="keep_old_attribute" value="false"/>
+          </operator>
+          <operator activated="true" class="blending:generate_id" compatibility="10.5.000" expanded="true" height="82" name="Generate ID (2)" width="90" x="313" y="85">
+            <parameter key="create_nominal_ids" value="false"/>
+            <parameter key="offset" value="-1"/>
+            <description align="center" color="yellow" colored="true" width="126">Generate new ID for Stream Service</description>
+          </operator>
+          <operator activated="true" class="blending:generate_columns" compatibility="10.5.000" expanded="true" height="82" name="Generate Attributes (4)" width="90" x="447" y="85">
+            <list key="function_descriptions">
+              <parameter key="TimeStampModified" value="date_add(TimeStamp,id,eval(%{TimeUnit}))"/>
+            </list>
+            <parameter key="keep_all_columns" value="true"/>
+            <parameter key="default_time_zone" value="Europe/Berlin"/>
+            <description align="center" color="yellow" colored="true" width="126">a column is added with the modified timestamp</description>
+          </operator>
+          <operator activated="true" class="blending:generate_columns" compatibility="10.5.000" expanded="true" height="82" name="Generate Attributes (5)" width="90" x="581" y="85">
+            <list key="function_descriptions">
+              <parameter key="tweet_timestamp" value="TimeStampModified"/>
+            </list>
+            <parameter key="keep_all_columns" value="true"/>
+            <parameter key="default_time_zone" value="Europe/Berlin"/>
+            <description align="center" color="yellow" colored="true" width="126">the original timestamp is replaced by the modified timestamp</description>
+          </operator>
+          <operator activated="true" class="blending:select_attributes" compatibility="10.5.000" expanded="true" height="82" name="Select Attributes (3)" width="90" x="715" y="85">
+            <parameter key="type" value="exclude attributes"/>
+            <parameter key="attribute_filter_type" value="a subset"/>
+            <parameter key="select_attribute" value="id"/>
+            <parameter key="select_subset" value="␞id␞TimeStamp␞TimeStampModified"/>
+            <parameter key="also_apply_to_special_attributes_(id,_label..)" value="true"/>
+          </operator>
+          <operator activated="true" class="date_to_nominal" compatibility="10.5.000" expanded="true" height="82" name="Date to Nominal (2)" width="90" x="849" y="85">
+            <parameter key="attribute_name" value="tweet_timestamp"/>
+            <parameter key="date_format" value="yyyy-MM-dd'T'HH:mm:ss.SSSZ"/>
+            <parameter key="time_zone" value="Europe/Berlin"/>
+            <parameter key="locale" value="English (United States)"/>
+            <parameter key="keep_old_attribute" value="false"/>
+            <description align="center" color="yellow" colored="true" width="126">the format of the modified timestamp is modified for merging columns in one commaseperated string</description>
+          </operator>
+          <connect from_port="input 1" to_op="Generate New TimeStamp (2)" to_port="table input"/>
+          <connect from_op="Generate New TimeStamp (2)" from_port="table output" to_op="Nominal to Date" to_port="example set input"/>
+          <connect from_op="Nominal to Date" from_port="example set output" to_op="Generate ID (2)" to_port="example set input"/>
+          <connect from_op="Generate ID (2)" from_port="example set output" to_op="Generate Attributes (4)" to_port="table input"/>
+          <connect from_op="Generate Attributes (4)" from_port="table output" to_op="Generate Attributes (5)" to_port="table input"/>
+          <connect from_op="Generate Attributes (5)" from_port="table output" to_op="Select Attributes (3)" to_port="example set input"/>
+          <connect from_op="Select Attributes (3)" from_port="example set output" to_op="Date to Nominal (2)" to_port="example set input"/>
+          <connect from_op="Date to Nominal (2)" from_port="example set output" to_port="input 1"/>
+          <portSpacing port="source_condition" spacing="0"/>
+          <portSpacing port="source_input 1" spacing="0"/>
+          <portSpacing port="source_input 2" spacing="0"/>
+          <portSpacing port="sink_input 1" spacing="0"/>
+          <portSpacing port="sink_input 2" spacing="0"/>
+        </process>
+        <description align="center" color="yellow" colored="true" width="126">the branch either transmits the original dataset or adapts the dataset with a new timestamp&lt;br&gt;</description>
+      </operator>
+      <operator activated="true" class="blending:generate_columns" compatibility="10.5.000" expanded="true" height="82" name="Generate Attributes" width="90" x="581" y="289">
+        <list key="function_descriptions">
+          <parameter key="ID" value="str(ID)"/>
+          <parameter key="tweet_lat" value="str(tweet_lat)"/>
+          <parameter key="tweet_lon" value="str(tweet_lon)"/>
+          <parameter key="tweet_id" value="str(tweet_id)"/>
+        </list>
+        <parameter key="keep_all_columns" value="true"/>
+        <parameter key="default_time_zone" value="Europe/Berlin"/>
+        <description align="center" color="yellow" colored="true" width="126">Select relevant attributes for the&lt;br&gt;output</description>
+      </operator>
+      <operator activated="true" class="loop_examples" compatibility="10.5.000" expanded="true" height="82" name="Loop Examples" width="90" x="715" y="289">
+        <parameter key="iteration_macro" value="example"/>
+        <process expanded="true">
+          <operator activated="true" class="retrieve" compatibility="10.5.000" expanded="true" height="68" name="CREXDATA" width="90" x="112" y="34">
+            <parameter key="repository_entry" value="/Connections/CREXDATA Unauthorized Kafka Cluster"/>
+          </operator>
+          <operator activated="true" class="filter_example_range" compatibility="10.5.000" expanded="true" height="82" name="Filter Example Range" width="90" x="45" y="238">
+            <parameter key="first_example" value="%{example}"/>
+            <parameter key="last_example" value="%{example}"/>
+            <parameter key="invert_filter" value="false"/>
+          </operator>
+          <operator activated="true" class="delay" compatibility="10.5.000" expanded="true" height="82" name="Delay" width="90" x="179" y="238">
+            <parameter key="delay" value="fixed"/>
+            <parameter key="delay_amount" value="1000"/>
+            <parameter key="min_delay_amount" value="0"/>
+            <parameter key="max_delay_amount" value="1000"/>
+          </operator>
+          <operator activated="false" class="retrieve" compatibility="10.5.000" expanded="true" height="68" name="CREXDATA AI Hub" width="90" x="112" y="136">
+            <parameter key="repository_entry" value="/Connections/crexdata-kafka-cluster-no-auth_AI-Hub-execution"/>
+          </operator>
+          <operator activated="true" class="kafka_connector:write_kafka_topic" compatibility="0.4.000" expanded="true" height="82" name="Kafka Sink" width="90" x="313" y="187">
+            <parameter key="kafka_topic" value="UPB-CREXDATA-SocialMedia-Stream"/>
+            <parameter key="attribute_separator" value=";"/>
+            <parameter key="bulk_sending" value="false"/>
+            <parameter key="message_interval" value="1"/>
+            <parameter key="message_format" value="JSON"/>
+            <parameter key="api_timeout" value="5000"/>
+          </operator>
+          <connect from_port="example set" to_op="Filter Example Range" to_port="example set input"/>
+          <connect from_op="CREXDATA" from_port="output" to_op="Kafka Sink" to_port="connection"/>
+          <connect from_op="Filter Example Range" from_port="example set output" to_op="Delay" to_port="through 1"/>
+          <connect from_op="Delay" from_port="through 1" to_op="Kafka Sink" to_port="input"/>
+          <portSpacing port="source_example set" spacing="0"/>
+          <portSpacing port="source_input 1" spacing="0"/>
+          <portSpacing port="sink_example set" spacing="0"/>
+          <portSpacing port="sink_output 1" spacing="0"/>
+        </process>
+        <description align="center" color="yellow" colored="true" width="126">Loop the choosen Time Interval</description>
+      </operator>
+      <connect from_op="Open File" from_port="file" to_op="Read CSV" to_port="file"/>
+      <connect from_op="Read CSV" from_port="output" to_op="Select Attributes" to_port="example set input"/>
+      <connect from_op="Category Parameter Macro" from_port="through 1" to_op="TimeUnit" to_port="through 1"/>
+      <connect from_op="Select Attributes" from_port="example set output" to_op="Branch" to_port="input 1"/>
+      <connect from_op="Branch" from_port="input 1" to_op="Generate Attributes" to_port="table input"/>
+      <connect from_op="Generate Attributes" from_port="table output" to_op="Loop Examples" to_port="example set"/>
+      <connect from_op="Loop Examples" from_port="example set" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <description align="center" color="yellow" colored="false" height="113" resized="true" width="264" x="29" y="259">Retrieve data</description>
+    </process>
+  </operator>
+</process>
