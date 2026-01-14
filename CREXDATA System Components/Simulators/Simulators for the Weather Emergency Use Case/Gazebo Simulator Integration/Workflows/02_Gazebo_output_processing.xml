@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="10.5.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="10.5.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="false" class="python_scripting:execute_python" compatibility="11.0.001" expanded="true" height="82" name="Execute Python" width="90" x="1318" y="901">
+        <parameter key="script" value="import json&#10;&#10;# RapidMiner liefert document-Inputs als Strings&#10;Lowest_Battery_Consumption = json.loads(document1)&#10;Fastest_Route = json.loads(document2)&#10;Efficient_Route = json.loads(document3)&#10;&#10;# Zusammenführen&#10;result = {&#10;    &quot;Lowest_Battery_Consumption&quot;: Lowest_Battery_Consumption,&#10;    &quot;Fastest_Route&quot;: Fastest_Route,&#10;    &quot;Efficient_Route&quot;: Efficient_Route&#10;}&#10;print(&quot;JSON-Datei erfolgreich erstellt.&quot;)"/>
+        <parameter key="notebook_cell_tag_filter" value=""/>
+        <parameter key="use_default_python" value="true"/>
+        <parameter key="package_manager" value="conda (anaconda)"/>
+        <parameter key="use_macros" value="false"/>
+      </operator>
+      <operator activated="false" class="retrieve" compatibility="10.5.000" expanded="true" height="68" name="Retrieve" width="90" x="1318" y="799">
+        <parameter key="repository_entry" value="/Connections/CREXDATA_Kafka_Cluster"/>
+      </operator>
+      <operator activated="false" class="kafka_connector:write_kafka_topic" compatibility="0.4.000" expanded="true" height="82" name="Write Kafka Topic" width="90" x="1452" y="799">
+        <parameter key="kafka_topic" value="Test_Deniz"/>
+        <parameter key="attribute_separator" value=";"/>
+        <parameter key="bulk_sending" value="false"/>
+        <parameter key="message_interval" value="5"/>
+        <parameter key="message_format" value="JSON"/>
+        <parameter key="api_timeout" value="5000"/>
+        <description align="center" color="yellow" colored="true" width="126">Write all json in Kafka Topic for ARGOS</description>
+      </operator>
+      <operator activated="true" class="loop_repository" compatibility="10.5.000" expanded="true" height="124" name="Loop Repository" width="90" x="45" y="187">
+        <parameter key="repository_folder" value="Waldbrand Ergebnisse/"/>
+        <parameter key="entry_type" value="blob"/>
+        <parameter key="filtered_string" value="file name (last part of the path)"/>
+        <parameter key="entry_name_macro" value="entry_name"/>
+        <parameter key="repository_path_macro" value="repository_path"/>
+        <parameter key="parent_folder_macro" value="parent_folder"/>
+        <parameter key="recursive" value="true"/>
+        <process expanded="true">
+          <operator activated="true" class="read_csv" compatibility="10.5.000" expanded="true" height="68" name="Read CSV (2)" width="90" x="179" y="136">
+            <parameter key="column_separators" value=","/>
+            <parameter key="trim_lines" value="true"/>
+            <parameter key="multiline_text" value="false"/>
+            <parameter key="use_quotes" value="true"/>
+            <parameter key="quotes_character" value="&quot;"/>
+            <parameter key="escape_character" value="\"/>
+            <parameter key="skip_comments" value="false"/>
+            <parameter key="comment_characters" value="#"/>
+            <parameter key="starting_row" value="1"/>
+            <parameter key="parse_numbers" value="false"/>
+            <parameter key="decimal_character" value="."/>
+            <parameter key="grouped_digits" value="false"/>
+            <parameter key="grouping_character" value=","/>
+            <parameter key="infinity_representation" value=""/>
+            <parameter key="date_format" value=""/>
+            <parameter key="use_header_row" value="true"/>
+            <parameter key="header_row" value="1"/>
+            <parameter key="first_row_as_names" value="true"/>
+            <list key="annotations"/>
+            <parameter key="time_zone" value="Europe/Berlin"/>
+            <parameter key="locale" value="English (United States)"/>
+            <parameter key="encoding" value="SYSTEM"/>
+            <parameter key="read_all_values_as_polynominal" value="false"/>
+            <list key="data_set_meta_data_information"/>
+            <parameter key="read_not_matching_values_as_missings" value="true"/>
+          </operator>
+          <operator activated="true" class="multiply" compatibility="10.5.000" expanded="true" height="124" name="Multiply (3)" width="90" x="447" y="136"/>
+          <operator activated="true" class="append" compatibility="10.5.000" expanded="true" height="82" name="Append" width="90" x="514" y="442">
+            <parameter key="data_management" value="auto"/>
+            <parameter key="merge_type" value="all"/>
+            <description align="center" color="yellow" colored="true" width="126">Merging Simulation Data&lt;br/&gt;for Visualization&lt;br/&gt;</description>
+          </operator>
+          <operator activated="true" class="aggregate" compatibility="10.5.000" expanded="true" height="82" name="Battery Consumption (2)" width="90" x="648" y="34">
+            <parameter key="use_default_aggregation" value="false"/>
+            <parameter key="attribute_filter_type" value="all"/>
+            <parameter key="attribute" value=""/>
+            <parameter key="attributes" value=""/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="attribute_value"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="time"/>
+            <parameter key="block_type" value="attribute_block"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_matrix_row_start"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="true"/>
+            <parameter key="default_aggregation_function" value="least"/>
+            <list key="aggregation_attributes">
+              <parameter key="Battery" value="minimum"/>
+              <parameter key="Battery" value="maximum"/>
+            </list>
+            <parameter key="group_by_attributes" value="flight_no"/>
+            <parameter key="count_all_combinations" value="false"/>
+            <parameter key="only_distinct" value="false"/>
+            <parameter key="ignore_missings" value="false"/>
+            <description align="center" color="yellow" colored="true" width="126">lowest Battery Level per Flight</description>
+          </operator>
+          <operator activated="true" class="aggregate" compatibility="10.5.000" expanded="true" height="82" name="Duration (2)" width="90" x="715" y="238">
+            <parameter key="use_default_aggregation" value="false"/>
+            <parameter key="attribute_filter_type" value="all"/>
+            <parameter key="attribute" value=""/>
+            <parameter key="attributes" value=""/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="attribute_value"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="time"/>
+            <parameter key="block_type" value="attribute_block"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_matrix_row_start"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="false"/>
+            <parameter key="default_aggregation_function" value="average"/>
+            <list key="aggregation_attributes">
+              <parameter key="Timestamp" value="maximum"/>
+              <parameter key="Timestamp" value="minimum"/>
+            </list>
+            <parameter key="group_by_attributes" value="flight_no"/>
+            <parameter key="count_all_combinations" value="false"/>
+            <parameter key="only_distinct" value="false"/>
+            <parameter key="ignore_missings" value="false"/>
+            <description align="center" color="yellow" colored="true" width="126">Maximum and Minimum Timestamp of Flight to calculate Flight Duration</description>
+          </operator>
+          <operator activated="true" class="blending:generate_columns" compatibility="10.5.000" expanded="true" height="82" name="Generate Attributes (3)" width="90" x="983" y="238">
+            <list key="function_descriptions">
+              <parameter key="FlightDuration" value="[maximum(Timestamp)] - [minimum(Timestamp)]"/>
+            </list>
+            <parameter key="keep_all_columns" value="true"/>
+            <parameter key="default_time_zone" value="Europe/Berlin"/>
+            <description align="center" color="yellow" colored="true" width="126">Calculation of Flight Duration</description>
+          </operator>
+          <operator activated="true" class="blending:generate_columns" compatibility="10.5.000" expanded="true" height="82" name="Generate Attributes (4)" width="90" x="916" y="85">
+            <list key="function_descriptions">
+              <parameter key="BatteryConsumption" value="[maximum(Battery)] - [minimum(Battery)]"/>
+            </list>
+            <parameter key="keep_all_columns" value="true"/>
+            <parameter key="default_time_zone" value="Europe/Berlin"/>
+            <description align="center" color="yellow" colored="true" width="126">Calculation of Battery Consumption</description>
+          </operator>
+          <connect from_port="repository object" to_op="Read CSV (2)" to_port="file"/>
+          <connect from_op="Read CSV (2)" from_port="output" to_op="Multiply (3)" to_port="input"/>
+          <connect from_op="Multiply (3)" from_port="output 1" to_op="Battery Consumption (2)" to_port="example set input"/>
+          <connect from_op="Multiply (3)" from_port="output 2" to_op="Duration (2)" to_port="example set input"/>
+          <connect from_op="Multiply (3)" from_port="output 3" to_op="Append" to_port="example set 1"/>
+          <connect from_op="Append" from_port="merged set" to_port="out 3"/>
+          <connect from_op="Battery Consumption (2)" from_port="example set output" to_op="Generate Attributes (4)" to_port="table input"/>
+          <connect from_op="Duration (2)" from_port="example set output" to_op="Generate Attributes (3)" to_port="table input"/>
+          <connect from_op="Generate Attributes (3)" from_port="table output" to_port="out 2"/>
+          <connect from_op="Generate Attributes (4)" from_port="table output" to_port="out 1"/>
+          <portSpacing port="source_repository object" spacing="0"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="168"/>
+          <portSpacing port="sink_out 3" spacing="189"/>
+          <portSpacing port="sink_out 4" spacing="21"/>
+        </process>
+      </operator>
+      <operator activated="true" class="append" compatibility="10.5.000" expanded="true" height="82" name="Append All Simulation Waypoints" width="90" x="179" y="544">
+        <parameter key="data_management" value="auto"/>
+        <parameter key="merge_type" value="all"/>
+        <description align="center" color="yellow" colored="true" width="126">Merging and Selection of all generated Flight Duration Data</description>
+      </operator>
+      <operator activated="false" class="text:data_to_json" compatibility="10.1.000" expanded="true" height="68" name="Waypoints json" width="90" x="1050" y="697">
+        <parameter key="ignore_arrays" value="false"/>
+        <parameter key="generate_array" value="true"/>
+        <parameter key="include_missing_values" value="false"/>
+        <parameter key="preserve_attribute_order" value="true"/>
+        <description align="center" color="yellow" colored="true" width="126">Create json File</description>
+      </operator>
+      <operator activated="true" class="append" compatibility="10.5.000" expanded="true" height="82" name="Append Flight Duration" width="90" x="179" y="289">
+        <parameter key="data_management" value="auto"/>
+        <parameter key="merge_type" value="all"/>
+        <description align="center" color="yellow" colored="true" width="126">Merging and Selection of all generated Flight Duration Data</description>
+      </operator>
+      <operator activated="true" class="append" compatibility="10.5.000" expanded="true" height="82" name="Append Battery Data" width="90" x="179" y="34">
+        <parameter key="data_management" value="auto"/>
+        <parameter key="merge_type" value="all"/>
+        <description align="center" color="yellow" colored="true" width="126">Merging and Selection of all generated Battery Simulation Data</description>
+      </operator>
+      <operator activated="true" class="concurrency:join" compatibility="10.5.000" expanded="true" height="82" name="Join" width="90" x="313" y="187">
+        <parameter key="remove_double_attributes" value="false"/>
+        <parameter key="join_type" value="inner"/>
+        <parameter key="use_id_attribute_as_key" value="false"/>
+        <list key="key_attributes">
+          <parameter key="flight_no" value="flight_no"/>
+        </list>
+        <parameter key="keep_both_join_attributes" value="false"/>
+        <description align="center" color="yellow" colored="true" width="126">Join all simulation cycles in one Subset</description>
+      </operator>
+      <operator activated="true" class="blending:select_attributes" compatibility="10.5.000" expanded="true" height="82" name="Select Attributes" width="90" x="514" y="187">
+        <parameter key="type" value="include attributes"/>
+        <parameter key="attribute_filter_type" value="a subset"/>
+        <parameter key="select_attribute" value=""/>
+        <parameter key="select_subset" value="flight_no␞BatteryConsumption␞FlightDuration"/>
+        <parameter key="also_apply_to_special_attributes_(id,_label..)" value="false"/>
+        <description align="center" color="yellow" colored="true" width="126">Filter simulation subsets</description>
+      </operator>
+      <operator activated="false" class="text:data_to_json" compatibility="10.1.000" expanded="true" height="68" name="Lowest Battery json" width="90" x="983" y="34">
+        <parameter key="ignore_arrays" value="false"/>
+        <parameter key="generate_array" value="true"/>
+        <parameter key="include_missing_values" value="false"/>
+        <parameter key="preserve_attribute_order" value="true"/>
+        <description align="center" color="yellow" colored="true" width="126">Create json File</description>
+      </operator>
+      <operator activated="false" class="text:data_to_json" compatibility="10.1.000" expanded="true" height="68" name="Fastest Route json" width="90" x="1117" y="34">
+        <parameter key="ignore_arrays" value="false"/>
+        <parameter key="generate_array" value="true"/>
+        <parameter key="include_missing_values" value="false"/>
+        <parameter key="preserve_attribute_order" value="true"/>
+        <description align="center" color="yellow" colored="true" width="126">Create json File</description>
+      </operator>
+      <operator activated="false" class="text:data_to_json" compatibility="10.1.000" expanded="true" height="68" name="Efficient Route json" width="90" x="916" y="544">
+        <parameter key="ignore_arrays" value="false"/>
+        <parameter key="generate_array" value="true"/>
+        <parameter key="include_missing_values" value="false"/>
+        <parameter key="preserve_attribute_order" value="true"/>
+        <description align="center" color="yellow" colored="true" width="126">Create json File</description>
+      </operator>
+      <operator activated="true" class="process_defined_operators:category_parameter_macro" compatibility="2.0.000" expanded="true" height="68" name="Category Parameter Macro" width="90" x="782" y="85">
+        <enumeration key="possible_values">
+          <parameter key="value" value="time"/>
+          <parameter key="value" value="energy"/>
+          <parameter key="value" value="efficiency"/>
+        </enumeration>
+        <parameter key="macro" value="optimizationCriterion"/>
+        <parameter key="value" value="efficiency"/>
+        <parameter key="set_as_integer_macro" value="false"/>
+        <parameter key="editable" value="true"/>
+      </operator>
+      <operator activated="true" class="blending:generate_columns" compatibility="10.5.000" expanded="true" height="82" name="Most efficient Route" width="90" x="715" y="187">
+        <list key="function_descriptions">
+          <parameter key="Efficiency" value="[BatteryConsumption] / [FlightDuration]"/>
+        </list>
+        <parameter key="keep_all_columns" value="true"/>
+        <parameter key="default_time_zone" value="Europe/Berlin"/>
+        <description align="center" color="yellow" colored="true" width="126">Rank Data for the most efficient checkpoint processing of the UAV regarding Battery Consumption and Flight Duration</description>
+      </operator>
+      <operator activated="true" class="branch" compatibility="10.5.000" expanded="true" height="103" name="Branch" width="90" x="849" y="187">
+        <parameter key="condition_type" value="expression"/>
+        <parameter key="condition_value" value="%{optimizationCriterion} == &quot;energy&quot;"/>
+        <parameter key="expression" value="%{optimizationCriterion} == &quot;energy&quot;"/>
+        <parameter key="io_object" value="ANOVAMatrix"/>
+        <parameter key="return_inner_output" value="true"/>
+        <process expanded="true">
+          <operator activated="true" class="blending:sort" compatibility="10.5.000" expanded="true" height="82" name="Lowest Battery Consumption" width="90" x="179" y="34">
+            <list key="sort_by">
+              <parameter key="BatteryConsumption" value="ascending"/>
+            </list>
+            <description align="center" color="yellow" colored="true" width="126">Rank Data for the lowest UAV Battery consumption&lt;br&gt;</description>
+          </operator>
+          <connect from_port="input 1" to_op="Lowest Battery Consumption" to_port="example set input"/>
+          <connect from_op="Lowest Battery Consumption" from_port="example set output" to_port="input 1"/>
+          <portSpacing port="source_condition" spacing="0"/>
+          <portSpacing port="source_input 1" spacing="0"/>
+          <portSpacing port="source_input 2" spacing="0"/>
+          <portSpacing port="sink_input 1" spacing="0"/>
+          <portSpacing port="sink_input 2" spacing="0"/>
+        </process>
+        <process expanded="true">
+          <operator activated="true" class="branch" compatibility="10.5.000" expanded="true" height="103" name="Branch (2)" width="90" x="179" y="34">
+            <parameter key="condition_type" value="expression"/>
+            <parameter key="condition_value" value="%{optimizationCriterion} == &quot;time&quot;"/>
+            <parameter key="expression" value="%{optimizationCriterion} == &quot;time&quot;"/>
+            <parameter key="io_object" value="ANOVAMatrix"/>
+            <parameter key="return_inner_output" value="true"/>
+            <process expanded="true">
+              <operator activated="true" class="blending:sort" compatibility="10.5.000" expanded="true" height="82" name="Fastest Route" width="90" x="179" y="34">
+                <list key="sort_by">
+                  <parameter key="FlightDuration" value="ascending"/>
+                </list>
+                <description align="center" color="yellow" colored="true" width="126">Rank Data for the fastest checkpoint processing of the UAV &lt;br&gt;</description>
+              </operator>
+              <connect from_port="input 1" to_op="Fastest Route" to_port="example set input"/>
+              <connect from_op="Fastest Route" from_port="example set output" to_port="input 1"/>
+              <portSpacing port="source_condition" spacing="0"/>
+              <portSpacing port="source_input 1" spacing="0"/>
+              <portSpacing port="source_input 2" spacing="0"/>
+              <portSpacing port="sink_input 1" spacing="0"/>
+              <portSpacing port="sink_input 2" spacing="0"/>
+            </process>
+            <process expanded="true">
+              <operator activated="true" class="blending:sort" compatibility="10.5.000" expanded="true" height="82" name="Most Efficient Route" width="90" x="380" y="34">
+                <list key="sort_by">
+                  <parameter key="Efficiency" value="ascending"/>
+                </list>
+              </operator>
+              <connect from_port="input 1" to_op="Most Efficient Route" to_port="example set input"/>
+              <connect from_op="Most Efficient Route" from_port="example set output" to_port="input 1"/>
+              <portSpacing port="source_condition" spacing="0"/>
+              <portSpacing port="source_input 1" spacing="0"/>
+              <portSpacing port="source_input 2" spacing="0"/>
+              <portSpacing port="sink_input 1" spacing="0"/>
+              <portSpacing port="sink_input 2" spacing="0"/>
+            </process>
+          </operator>
+          <connect from_port="input 1" to_op="Branch (2)" to_port="input 1"/>
+          <connect from_op="Branch (2)" from_port="input 1" to_port="input 1"/>
+          <portSpacing port="source_condition" spacing="0"/>
+          <portSpacing port="source_input 1" spacing="0"/>
+          <portSpacing port="source_input 2" spacing="0"/>
+          <portSpacing port="sink_input 1" spacing="0"/>
+          <portSpacing port="sink_input 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="false" class="concurrency:join" compatibility="10.5.000" expanded="true" height="82" name="Join (2)" width="90" x="1050" y="544">
+        <parameter key="remove_double_attributes" value="true"/>
+        <parameter key="join_type" value="inner"/>
+        <parameter key="use_id_attribute_as_key" value="false"/>
+        <list key="key_attributes">
+          <parameter key="flight_no" value="flight_no"/>
+        </list>
+        <parameter key="keep_both_join_attributes" value="false"/>
+      </operator>
+      <operator activated="false" breakpoints="after" class="operator_toolbox:group_into_collection" compatibility="2.18.000" expanded="true" height="82" name="Group Into Collection" width="90" x="1184" y="544">
+        <parameter key="group_by_attribute" value="flight_no"/>
+        <parameter key="group_by_attribute (numerical)" value=""/>
+        <parameter key="sorting_order" value="occurrence"/>
+      </operator>
+      <operator activated="false" breakpoints="after" class="text:data_to_json" compatibility="10.1.000" expanded="true" height="68" name="Data To JSON" width="90" x="1318" y="544">
+        <parameter key="ignore_arrays" value="false"/>
+        <parameter key="generate_array" value="true"/>
+        <parameter key="include_missing_values" value="false"/>
+        <parameter key="preserve_attribute_order" value="false"/>
+      </operator>
+      <operator activated="true" class="python_scripting:execute_python" compatibility="11.0.001" expanded="true" height="124" name="Execute Python (2)" width="90" x="1050" y="391">
+        <parameter key="script" value="import pandas as pd&#10;import json&#10;import math&#10;&#10;def safe_cast(value, cast_type, default=None):&#10;    try:&#10;        if value is None or (isinstance(value, float) and math.isnan(value)):&#10;            return default&#10;        return cast_type(value)&#10;    except:&#10;        return default&#10;&#10;def rm_main(kpi_df, wp_df, macros):&#10;    optimization_criterion = macros.get(&quot;optimizationCriterion&quot;, None)&#10;&#10;    flights = []&#10;&#10;    for _, row in kpi_df.iterrows():&#10;        fn = row[&quot;flight_no&quot;]&#10;&#10;        flight_info = {&#10;            &quot;flight_no&quot;: safe_cast(fn, int, fn),&#10;            &quot;BatteryConsumption&quot;: row.get(&quot;BatteryConsumption&quot;),&#10;            &quot;FlightDuration&quot;: row.get(&quot;FlightDuration&quot;),&#10;            &quot;Efficiency&quot;: row.get(&quot;Efficiency&quot;)&#10;        }&#10;&#10;        wp_subset = wp_df[wp_df[&quot;flight_no&quot;] == fn]&#10;&#10;        waypoints = []&#10;        for _, w in wp_subset.iterrows():&#10;            waypoints.append({&#10;                &quot;event&quot;: w.get(&quot;Event&quot;),&#10;                &quot;latitude&quot;: safe_cast(w.get(&quot;Latitude&quot;), float),&#10;                &quot;longitude&quot;: safe_cast(w.get(&quot;Longitude&quot;), float),&#10;                &quot;altitude&quot;: safe_cast(w.get(&quot;Altitude&quot;), float),&#10;                &quot;timestamp&quot;: safe_cast(w.get(&quot;Timestamp&quot;), float),&#10;                &quot;battery&quot;: safe_cast(w.get(&quot;Battery&quot;), float)&#10;            })&#10;&#10;        flight_info[&quot;Waypoints&quot;] = waypoints&#10;        flights.append(flight_info)&#10;&#10;    result = {&#10;        &quot;cityTag&quot;: &quot;Dortmund&quot;,&#10;        &quot;optimizationCriterion&quot;: optimization_criterion,&#10;        &quot;flights&quot;: flights&#10;    }&#10;&#10;    json_str = json.dumps(result, indent=2)&#10;&#10;    out_df = pd.DataFrame([{&quot;message&quot;: json_str}])&#10;&#10;    return out_df"/>
+        <parameter key="notebook_cell_tag_filter" value=""/>
+        <parameter key="use_default_python" value="true"/>
+        <parameter key="package_manager" value="conda (anaconda)"/>
+        <parameter key="use_macros" value="true"/>
+      </operator>
+      <operator activated="true" class="retrieve" compatibility="10.5.000" expanded="true" height="68" name="Retrieve (2)" width="90" x="1117" y="238">
+        <parameter key="repository_entry" value="//CREXDATA/Connections/CREXDATA Unauthorized Kafka Cluster"/>
+      </operator>
+      <operator activated="true" class="kafka_connector:write_kafka_topic" compatibility="0.4.000" expanded="true" height="82" name="Write Kafka Topic (2)" width="90" x="1318" y="289">
+        <parameter key="kafka_topic" value="UPB-CREXDATA-RoboticSimulation-Stream"/>
+        <parameter key="attribute_separator" value=";"/>
+        <parameter key="bulk_sending" value="false"/>
+        <parameter key="message_interval" value="1"/>
+        <parameter key="message_format" value="String"/>
+        <parameter key="api_timeout" value="5000"/>
+      </operator>
+      <connect from_op="Execute Python" from_port="output 1" to_op="Write Kafka Topic" to_port="input"/>
+      <connect from_op="Retrieve" from_port="output" to_op="Write Kafka Topic" to_port="connection"/>
+      <connect from_op="Loop Repository" from_port="out 1" to_op="Append Battery Data" to_port="example set 1"/>
+      <connect from_op="Loop Repository" from_port="out 2" to_op="Append Flight Duration" to_port="example set 1"/>
+      <connect from_op="Loop Repository" from_port="out 3" to_op="Append All Simulation Waypoints" to_port="example set 1"/>
+      <connect from_op="Append All Simulation Waypoints" from_port="merged set" to_op="Execute Python (2)" to_port="input 2"/>
+      <connect from_op="Append Flight Duration" from_port="merged set" to_op="Join" to_port="right"/>
+      <connect from_op="Append Battery Data" from_port="merged set" to_op="Join" to_port="left"/>
+      <connect from_op="Join" from_port="join" to_op="Select Attributes" to_port="example set input"/>
+      <connect from_op="Select Attributes" from_port="example set output" to_op="Most efficient Route" to_port="table input"/>
+      <connect from_op="Most efficient Route" from_port="table output" to_op="Branch" to_port="input 1"/>
+      <connect from_op="Branch" from_port="input 1" to_op="Execute Python (2)" to_port="input 1"/>
+      <connect from_op="Execute Python (2)" from_port="output 1" to_op="Write Kafka Topic (2)" to_port="input"/>
+      <connect from_op="Retrieve (2)" from_port="output" to_op="Write Kafka Topic (2)" to_port="connection"/>
+      <connect from_op="Write Kafka Topic (2)" from_port="connection" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <description align="center" color="red" colored="true" height="243" resized="true" width="294" x="1287" y="764">tbd. Python to merge all json in one json for pushing through kafka&lt;br&gt;</description>
+    </process>
+  </operator>
+</process>

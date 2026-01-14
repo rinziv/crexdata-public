@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="10.5.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="10.5.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="gazebo_operators:refresh_gazebo_data" compatibility="1.0.000" expanded="true" height="68" name="Refresh Gazebo Data" width="90" x="112" y="34"/>
+      <operator activated="true" class="store" compatibility="10.5.000" expanded="true" height="68" name="Store (2)" width="90" x="380" y="34">
+        <parameter key="repository_entry" value="//upb_inprogress/Enid/data/cwd"/>
+      </operator>
+      <connect from_op="Refresh Gazebo Data" from_port="result 1" to_op="Store (2)" to_port="input"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+    </process>
+  </operator>
+</process>

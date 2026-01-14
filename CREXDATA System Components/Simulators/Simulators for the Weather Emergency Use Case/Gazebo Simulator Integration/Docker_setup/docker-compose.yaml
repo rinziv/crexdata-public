@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  px4_sim_01:
+    image: ros_gazebo_px4       # <-- our newly built image
+    container_name: px4_debug
+    privileged: true
+    volumes:
+      - ./instance01/world:/workspace/px4_launch:ro
+      - ./instance01/output:/workspace/output:rw
+    ports:
+      - "14556:14556/udp"
+      - "11345:11345"
+    #command: bash -lc "gzserver /workspace/px4_launch/world.sdf --verbose --port 11345 & sleep 2 && roslaunch mavros px4.launch fcu_url:#=udp://:14556@localhost:14556"
