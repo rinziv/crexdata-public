@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  vue-app:
+    build:
+      context: .          # path to your project (where Dockerfile is)
+      dockerfile: Dockerfile
+    container_name: vue-app
+    ports:
+      - "5173:5173"         # host:container (open app on http://localhost:8080)
+    restart: unless-stopped
