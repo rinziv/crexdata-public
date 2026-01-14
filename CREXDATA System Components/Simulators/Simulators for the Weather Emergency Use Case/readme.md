@@ -6,7 +6,11 @@ In the Weather Emergencies Use Case, flood simulation, robotic simulation, and w
 
 ![EmCase SHS activity diagramm](https://github.com/altairengineering/crexdata-private/blob/da6f18934cb1293da99c4b1d4eda94890966f640/CREXDATA%20System%20Components/Simulators/Simulators%20for%20the%20Weather%20Emergency%20Use%20Case/EmCase%20SHS%20activity%20diagram.svg)
 
+## Workflow overview
+### 
+
 ## License
 All Weather Emergencies Use Case software components are licensed under Apache License 2.0.
 
 All Weather Emergencies Use Case scientific documentation and methodological descriptions are licensed under CC BY 4.0.
+
