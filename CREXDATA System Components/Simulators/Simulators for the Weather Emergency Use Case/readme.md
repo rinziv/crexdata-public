@@ -9,13 +9,23 @@ In the Weather Emergencies Use Case, flood simulation, robotic simulation, and w
 ## Workflow overview
 ### Data Injector
 Social Media Posts
-<img width="917" height="499" alt="image" src="https://github.com/user-attachments/assets/351134b3-3544-48b2-8a4b-d8d81b091842" />
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/351134b3-3544-48b2-8a4b-d8d81b091842"
+       alt="image"
+       width="600" />
+</p>
 
-
+Biometric Data
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/e9850888-ba1f-4177-8d99-3e8886ba4a80"
+       alt="image"
+       width="600" />
+</p>
 
 ## License
 All Weather Emergencies Use Case software components are licensed under Apache License 2.0.
 
 All Weather Emergencies Use Case scientific documentation and methodological descriptions are licensed under CC BY 4.0.
+
 
 
