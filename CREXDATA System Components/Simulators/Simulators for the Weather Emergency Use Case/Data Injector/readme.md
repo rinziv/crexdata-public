@@ -10,7 +10,11 @@ Workflows in the EmCase SHS are designed to process data from the field, e.g., s
        width="600" />
 </p>
 
+## Datasets
+The repository contains synthetic biometric data and synthetic social media posts. These datasets were generated to test the Data Injector and the processing technologies. The synthetic posts include typical social media posts composed of everyday content and special content in the event of a flood or wildfire. The metadata includes geo-positions in the area of the Emergency Case pilot sites. The biometric data contains all parameters used by the [eXplainable AI](CREXDATA System Components/Explainable AI (XAI)) model for fatigue assessment. For each parameter, the values were set within the range measured during real firefighting exercises.
+
 ## License 
 Software components are licensed under Apache License 2.0.
 
 Scientific documentation and methodological descriptions are licensed under CC BY 4.0.
+
