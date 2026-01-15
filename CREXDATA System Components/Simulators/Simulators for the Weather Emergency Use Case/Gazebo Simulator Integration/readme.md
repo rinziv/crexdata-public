@@ -14,7 +14,7 @@ The scripts folder contains Python scripts used within the Docker container to c
 </p>
 
 ## Datasets
-The datasets folder contains example outputs of the drone simulation in csv format. These include the outputs from the final trials in Dortmund and Innsbruck. In Dortmund, a drone simulation was used to plan a flight over a flooded area, in which specific points of interest and selected posts from [Text Mining](CREXDATA System Components/Text Analytics) had to be checked. In Innsbruck, the drone flight was planned to check points of interest around a wildfire area. The outputs include all route alternatives simulated for a specific mission. For all alternative routes, timestamps and battery levels were stored when reaching a target point. 
+The datasets folder contains example outputs of the drone simulation in csv format. These include the outputs from the final trials in Dortmund and Innsbruck. In Dortmund, a drone simulation was used to plan a flight over a flooded area, in which specific points of interest and selected posts from [Text Mining]([CREXDATA System Components/Text Analytics](https://github.com/altairengineering/crexdata-public/tree/be28e1b10445a0b670e6d1a069cf1a21bbaded9b/CREXDATA%20System%20Components/Text%20Analytics)) had to be checked. In Innsbruck, the drone flight was planned to check points of interest around a wildfire area. The outputs include all route alternatives simulated for a specific mission. For all alternative routes, timestamps and battery levels were stored when reaching a target point. 
 
 ## Installation and setup
 Download everything inside the [Docker_setup](https://github.com/altairengineering/crexdata-private/tree/master/WP2/use-cases/weather-emergency/Gazebo/Docker_setup) folder. In a terminal, navigate to the folder and run the following command to build the Docker image.
@@ -47,4 +47,5 @@ Parameters can be set in the config folder catkin_ws/src/automatic_launch/config
 Software components are licensed under Apache License 2.0.
 
 Scientific documentation and methodological descriptions are licensed under CC BY 4.0.
+
 
