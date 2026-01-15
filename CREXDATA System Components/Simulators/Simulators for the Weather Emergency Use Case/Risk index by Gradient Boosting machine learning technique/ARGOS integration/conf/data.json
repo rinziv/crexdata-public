@@ -1,0 +1,40 @@
+{
+    "general": {
+        "log_file": "/app/logs/models/fmi/severe_weather_risk.log"
+    },
+    "monitoring": {
+        "data_availability_name": "models/fmi/severe_weather_risk"
+    },
+    "products": [
+        {
+            "variable": "severe_traffic_accidents_risk",
+            "type": "forecast",
+            "supplier": "fmi",
+            "code": "PRONTO_Liikenne"
+        },
+        {
+            "variable": "all_traffic_accidents_risk",
+            "type": "forecast",
+            "supplier": "fmi",
+            "code": "VAKES_ajoneuvot"
+        },
+        {
+            "variable": "forest_fires_risk",
+            "type": "forecast",
+            "supplier": "fmi",
+            "code": "PRONTO_Maastopalo"
+        },
+        {
+            "variable": "storm_damage_clearanace_risk",
+            "type": "forecast",
+            "supplier": "fmi",
+            "code": "PRONTO_Vahingont"
+        },
+        {
+            "variable": "emergency_calls_risk",
+            "type": "forecast",
+            "supplier": "fmi",
+            "code": "Erica"
+        }
+    ]
+}
