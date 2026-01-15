@@ -1,0 +1,241 @@
+Using config file ./config/central.xml ... 
+1
+dc? 1
+User parameters in XML config file: 
+Bool parameters:: 
+use_single_infected_cell: 0 [none]
+use_uniform_dist: 0 [none]
+
+Int parameters:: 
+random_seed: 0 [dimensionless]
+rounds: 2 [dimensionless]
+particle_type: 0 [dimensionless]
+ignore_smoothing_flag: 1 [dimensionless]
+number_of_CD8_Tcells: 0 [none]
+number_of_macrophages: 50 [none]
+number_of_neutrophils: 0 [none]
+number_of_fibroblast: 57 [none]
+number_of_DCs: 28 [none]
+number_of_CD4_Tcells: 0 [none]
+
+Double parameters:: 
+div_immune: 0 [dimensionless]
+immune_z_offset: 0 [micron]
+macrophage_max_recruitment_rate: 1e-08 [cells/min/micron^3]
+macrophage_recruitment_min_signal: 0.05 [substrate/micron^3]
+macrophage_recruitment_saturation_signal: 0.5 [substrate/micron^3]
+neutrophil_max_recruitment_rate: 1e-08 [cells/min/micron^3]
+neutrophil_recruitment_min_signal: 0.05 [substrate/micron^3]
+neutrophil_recruitment_saturation_signal: 0.5 [substrate/micron^3]
+DC_max_recruitment_rate: 2e-09 [cells/min/micron^3]
+DC_recruitment_min_signal: 0.1 [substrate/micron^3]
+DC_recruitment_saturation_signal: 0.5 [substrate/micron^3]
+Lymph_node_td: 0.5 [days]
+Lymph_node_Th: 0.25 [days]
+TC_death_rate: 1.4e-06 [cells/min]
+max_activation_TC: 0.0018 [cells/min]
+half_max_activation_TC: 5000 [cells]
+max_clearance_TC: 0.00018 [cells/min]
+half_max_clearance_TC: 1 [cells]
+TC_population_threshold: 1000 [cells]
+T_Cell_Recruitment: 0.005 [cells/min]
+transport_ratio: 0.05 [cells/min]
+DM_decay: 0.00035 [cells/min]
+Th1_max_activation: 1e-07 [cells/min]
+Th1_damping: 2e-05 [cells/min]
+Th1_decay: 7e-08 [cells/min]
+Th_base_decay: 0.000156 [cells/min]
+Th2_self_feeback: 4e-08 [cells/min]
+Th2_max_conversion: 1e-06 [cells/min]
+BCell_removal: 0.0006 [cells/min]
+BCell_activation: 0.0021 [cells/min]
+BCell_activation_half: 10000 [cells/min]
+BCell_DC_proliferation: 0.002 [cells/min]
+BCell_Th2_wieght_function: 1.25 [cells/min]
+BCell_damping: 20000 [cells/min]
+PCell_recuitment: 0.0002 [cells/min]
+PCell_degradation: 0.00014 [cells/min]
+Ig_recuitment: 1 [cells/min]
+Ig_degradation: 0.00139 [cells/min]
+DC_leave_prob: 3.3e-05 [cells/min]
+TC_activation: 0.001 [cells/min]
+TC_activation_half: 100 [cells/min]
+Th_half: 0.01 [cells/min]
+Ig_neutralization_rate: 3 [1/min]
+Death_rates_of_old_Tcells: 100 [cells/min]
+RNA_lower_bound: 125 [cells/min]
+fibroblast_max_recruitment_rate: 4e-09 [cells/min/micron^3]
+fibroblast_recruitment_min_signal: 7.1092 [substrate/micron^3]
+fibroblast_recruitment_saturation_signal: 22.928 [substrate/micron^3]
+div_initialization: 0 [dimensionless]
+mech_voxel_size: 30 [micron]
+multiplicity_of_infection: 100 [none]
+infection_std_dev: 100 [micron]
+DC_induced_CD8_proliferation: 0.00208 [cells/min/micron^3]
+DC_induced_CD8_attachment: 0.6 [cells/min/micron^3]
+virions_needed_for_DC_activation: 10 [virions]
+epsilon_distance: 1.75 [dimensionless]
+perecentage_tissue_vascularized: 8.8 [percentage]
+div_lymph: 0 [dimensionless]
+DM_init: 0 [cells]
+DL_init: 0 [cells]
+TC_init: 0 [cells]
+TH1_init: 0 [cells]
+TH2_init: 0 [cells]
+TCt_init: 0 [cells]
+Tht_init: 0 [cells]
+Bc_init: 0 [cells]
+Ps_init: 0 [cells]
+Ig_init: 0 [cells]
+TCN_init: 1000 [cells]
+THN_init: 1000 [cells]
+BN_init: 1000 [cells]
+div_Therapy: 0 [dimensionless]
+therapy_dt: 0 [min]
+Ig_dose: 0 [mol/micron^3]
+div_colors: 0 [dimensionless]
+epithelial_opacity: 0.65 [dimensionless]
+non_epithelial_opacity: 0.8 [dimensionless]
+ROS_secretion_rate: 0.01 [none]
+epsilon_ROS: 10 [none]
+Antibody_binding_rate: 0.1 [none]
+antibody_half_effect: 0.1 [none]
+virus_fraction_released_at_death: 0 [none]
+
+String parameters:: 
+simulation_id: 0 [dimensionless]
+turbine: runs [dimensionless]
+alveoli_id: lsi [dimensionless]
+input_virion_alya: /gpfs/scratch/bsc08/bsc008602/ALYA_PB/alya/alcachofa/fensap-deposition.pts-depo.csv [dimensionless]
+color_variable: assembled_virion [dimensionless]
+apoptotic_epithelium_color: black [dimensionless]
+apoptotic_immune_color: rosybrown [dimensionless]
+pyroptotic_epithelium_color: darkorange [dimensionless]
+pyroptotic_bystander_epithelium_color: darkred [dimensionless]
+vi_apoptotic_epithelium_color: forestgreen [dimensionless]
+CD8_Tcell_color: red [dimensionless]
+CD4_Tcell_color: orange [dimensionless]
+Macrophage_color: rgb(35,139,69) [dimensionless]
+activated_macrophage_color: lime [dimensionless]
+exhausted_macrophage_color: rgb(116,196,118) [dimensionless]
+hyperactivated_macrophage_color: rgb(168,221,181) [dimensionless]
+Neutrophil_color: cyan [dimensionless]
+DC_color: rgb(129,15,124) [dimensionless]
+activated_DC_color: deeppink [dimensionless]
+fibroblast_color: blueviolet [dimensionless]
+
+
+which boundaries?
+1 1 1 1 1 1
+
+Microenvironment summary: microenvironment: 
+
+Mesh information: 
+type: uniform Cartesian
+Domain: [-440,440] micron x [-440,440] micron x [-10,10] micron
+   resolution: dx = 20 micron
+   voxels: 1936
+   voxel faces: 0
+   volume: 1.5488e+07 cubic micron
+Densities: (11 total)
+   virion:
+     units: virion/micron^3
+     diffusion coefficient: 0.25 micron^2 / min
+     decay rate: 0.0001 min^-1
+     diffusion length scale: 50 micron
+     initial condition: 0 virion/micron^3
+     boundary condition: 0 virion/micron^3 (enabled: false)
+   interferon 1:
+     units: mol/micron^3
+     diffusion coefficient: 25 micron^2 / min
+     decay rate: 0.0102 min^-1
+     diffusion length scale: 49.5074 micron
+     initial condition: 0 mol/micron^3
+     boundary condition: 0 mol/micron^3 (enabled: false)
+   pro-inflammatory cytokine:
+     units: mol/micron^3
+     diffusion coefficient: 555.56 micron^2 / min
+     decay rate: 0.0102 min^-1
+     diffusion length scale: 233.381 micron
+     initial condition: 0 mol/micron^3
+     boundary condition: 0 mol/micron^3 (enabled: false)
+   chemokine:
+     units: mol/micron^3
+     diffusion coefficient: 555.56 micron^2 / min
+     decay rate: 0.0102 min^-1
+     diffusion length scale: 233.381 micron
+     initial condition: 0 mol/micron^3
+     boundary condition: 0 mol/micron^3 (enabled: false)
+   debris:
+     units: mol/micron^3
+     diffusion coefficient: 555.56 micron^2 / min
+     decay rate: 0.0102 min^-1
+     diffusion length scale: 233.381 micron
+     initial condition: 0 mol/micron^3
+     boundary condition: 0 mol/micron^3 (enabled: false)
+   pro-pyroptosis cytokine:
+     units: mol/micron^3
+     diffusion coefficient: 5.56 micron^2 / min
+     decay rate: 0.0102 min^-1
+     diffusion length scale: 23.3473 micron
+     initial condition: 0 mol/micron^3
+     boundary condition: 0 mol/micron^3 (enabled: false)
+   anti-inflammatory cytokine:
+     units: ng/micron^3
+     diffusion coefficient: 3000 micron^2 / min
+     decay rate: 0.0104 min^-1
+     diffusion length scale: 537.086 micron
+     initial condition: 0 ng/micron^3
+     boundary condition: 0 ng/micron^3 (enabled: false)
+   collagen:
+     units: ug/micron^3
+     diffusion coefficient: 0 micron^2 / min
+     decay rate: 0 min^-1
+     diffusion length scale: 0 micron
+     initial condition: 0 ug/micron^3
+     boundary condition: 0 ug/micron^3 (enabled: false)
+   Ig:
+     units: mol/micron^3
+     diffusion coefficient: 6 micron^2 / min
+     decay rate: 0.0001 min^-1
+     diffusion length scale: 244.949 micron
+     initial condition: 0 mol/micron^3
+     boundary condition: 0 mol/micron^3 (enabled: false)
+   ROS:
+     units: mol/micron^3
+     diffusion coefficient: 1e-06 micron^2 / min
+     decay rate: 60 min^-1
+     diffusion length scale: 0.000129099 micron
+     initial condition: 0 mol/micron^3
+     boundary condition: 0 mol/micron^3 (enabled: false)
+   oxygen:
+     units: mmHg
+     diffusion coefficient: 100000 micron^2 / min
+     decay rate: 0.1 min^-1
+     diffusion length scale: 1000 micron
+     initial condition: 100 mmHg
+     boundary condition: 100 mmHg (enabled: true)
+
+filename : /gpfs/scratch/bsc08/bsc008602/ALYA_PB/alya/alcachofa/fensap-deposition.pts-depo.csv
+multiplicity_of_infection100
+Error: File '/gpfs/scratch/bsc08/bsc008602/ALYA_PB/alya/alcachofa/fensap-deposition.pts-depo.csv' does not exist or cannot be opened.
+exiting..
+here cellytpes!
+virtual_wall_at_domain_edge: enabled
+Pre-processing type 0 named default
+Pre-processing type 1 named lung epithelium
+Pre-processing type 2 named immune
+Pre-processing type 3 named CD8 Tcell
+Pre-processing type 4 named macrophage
+Pre-processing type 5 named neutrophil
+Pre-processing type 6 named DC
+Pre-processing type 7 named CD4 Tcell
+Pre-processing type 8 named fibroblast
+Pre-processing type 9 named residual
+Processing default ... 
+Note: setting cell definition to 2D based on microenvironment domain settings ... 
+Creating standard necrosis model
+Processing lung epithelium ... 
+	Copying from type default ... 
+Note: setting cell definition to 2D based on microenvironment domain settings ... 
+terminate called after throwing an instance of 'BNException'
