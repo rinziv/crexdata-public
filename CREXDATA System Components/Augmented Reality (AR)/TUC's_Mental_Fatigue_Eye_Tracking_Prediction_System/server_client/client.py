@@ -267,7 +267,7 @@ def start_camera_stream():
 
         poll_result = stream_process.poll()
         if poll_result is not None:
-            print(f"❌ Stream process failed with code: {poll_result}")
+            print(f" Stream process failed with code: {poll_result}")
             # Read error logs
             print("\n📋 Error logs:")
             for log_file in ["/tmp/rpicam_error.log", "/tmp/ffmpeg_stream_error.log"]:
@@ -285,7 +285,7 @@ def start_camera_stream():
         return stream_process
 
     except Exception as e:
-        print(f"❌ Failed to start camera stream: {e}")
+        print(f" Failed to start camera stream: {e}")
         return None
 
 
@@ -443,11 +443,11 @@ def main():
                 time.sleep(reconnect_delay)
 
         except KeyboardInterrupt:
-            print("\n🛑 Interrupted by user")
+            print("\n Interrupted by user")
             is_running = False
             break
         except Exception as e:
-            print(f"❌ Unexpected error: {e}")
+            print(f" Unexpected error: {e}")
             import traceback
 
             traceback.print_exc()
