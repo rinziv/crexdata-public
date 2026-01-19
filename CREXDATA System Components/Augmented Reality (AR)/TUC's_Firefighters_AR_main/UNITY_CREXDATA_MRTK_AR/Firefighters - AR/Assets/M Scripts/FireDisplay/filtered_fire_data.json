@@ -1,0 +1,98 @@
+[
+    {
+        "latitude": 40.77784,
+        "longitude": 27.2672,
+        "acq_date": "2024-09-23",
+        "acq_time": "0102",
+        "brightness": 307.21,
+        "frp": 1.35
+    },
+    {
+        "latitude": 38.42803,
+        "longitude": 27.21749,
+        "acq_date": "2025-03-23",
+        "acq_time": "0102",
+        "brightness": 304.33,
+        "frp": 0.79
+    },
+    {
+        "latitude": 41.5021,
+        "longitude": 19.74343,
+        "acq_date": "2024-09-23",
+        "acq_time": "0102",
+        "brightness": 296.12,
+        "frp": 0.55
+    },
+    {
+        "latitude": 35.509427,
+        "longitude": 24.014012,
+        "acq_date": "2024-09-23",
+        "acq_time": "0102",
+        "brightness": 302.74,
+        "frp": 0.76
+    },
+    {
+        "latitude": 39.86666,
+        "longitude": 26.24246,
+        "acq_date": "2024-09-23",
+        "acq_time": "0102",
+        "brightness": 299.06,
+        "frp": 1.05
+    },
+    {
+        "latitude": 38.48079,
+        "longitude": 27.10806,
+        "acq_date": "2024-09-23",
+        "acq_time": "0102",
+        "brightness": 318.54,
+        "frp": 1.62
+    },
+    {
+        "latitude": 38.45504,
+        "longitude": 27.26211,
+        "acq_date": "2024-09-23",
+        "acq_time": "0102",
+        "brightness": 298.29,
+        "frp": 0.5
+    },
+    {
+        "latitude": 38.74399,
+        "longitude": 26.94997,
+        "acq_date": "2024-09-23",
+        "acq_time": "0102",
+        "brightness": 302.2,
+        "frp": 1.97
+    },
+    {
+        "latitude": 38.74603,
+        "longitude": 26.95182,
+        "acq_date": "2024-09-23",
+        "acq_time": "0102",
+        "brightness": 299.28,
+        "frp": 0.86
+    },
+    {
+        "latitude": 38.37466,
+        "longitude": 24.06056,
+        "acq_date": "2024-09-23",
+        "acq_time": "0102",
+        "brightness": 304.8,
+        "frp": 0.78
+    },
+    {
+        "latitude": 40.77763,
+        "longitude": 27.2677,
+        "acq_date": "2024-09-23",
+        "acq_time": "0102",
+        "brightness": 310.69,
+        "frp": 1.4
+    },
+    {
+        "latitude": 39.35543,
+        "longitude": 22.98286,
+        "acq_date": "2024-09-23",
+        "acq_time": "0102",
+        "brightness": 301.85,
+        "frp": 1.4
+    }
+]
